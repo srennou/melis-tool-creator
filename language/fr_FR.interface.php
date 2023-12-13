@@ -66,6 +66,9 @@ return [
     'tr_melistoolcreator_cols_translations' => 'Traductions des colonnes',
     'tr_melistoolcreator_cols_translations_title' => 'Traductions des colonnes de la table',
     'tr_melistoolcreator_cols_translations_desc' => 'Ces colonnes sont utilisées soit dans la liste de l\'outil, soit dans le formulaire d\'édition. <br>Saisissez les traductions dans les différents langages. <br>Les colonnes doivent être traduites dans au moins une langue',
+    'tr_melistoolcreator_custom_translations' => 'Personalisation',
+    'tr_melistoolcreator_custom_translations_title' => 'Table de personalisation avancer',
+    'tr_melistoolcreator_custom_translations_desc' => 'Cette etape est pour personaliser le module ',
     'tr_melistoolcreator_summary' => 'Récapitulatif',
     'tr_melistoolcreator_finalization' => 'Finalisation',
     'tr_melistoolcreator_finalization_desc' => 'Cochez la case ci-dessous pour activer l\'outil lors de sa création',
@@ -93,6 +96,7 @@ return [
     'tr_melistoolcreator_col_editable' => 'Editable',
     'tr_melistoolcreator_col_mandatory' => 'Obligatoire',
     'tr_melistoolcreator_col_field_type' => 'Input type',
+    'tr_melistoolcreator_col_filters' => 'Filters',
     'tr_melistoolcreator_columns' => 'Colonnes',
     'tr_melistoolcreator_columns_desciption' => 'Description des colonnes',
     'tr_melistoolcreator_refreshing' => 'Rafraîchissement...',
@@ -126,6 +130,8 @@ return [
     'tr_melistoolcreator_select_lang_name' => 'Langue',
     'tr_melistoolcreator_select_tpl_name' => 'Template',
     'tr_melistoolcreator_select_admin_name' => 'Utilisateur BO',
+    'tr_melistoolcreator_select_date' => 'Date',
+    'tr_melistoolcreator_select_date_time' => 'DateTime',
     'tr_melistoolcreator_table_list_only_with_pk' => 'Le créateur d\'outils ne peut afficher que des tables avec une clef primaire et en incrémentation automatique',
 
     // Forms
@@ -193,5 +199,14 @@ return [
 
     'tr_melistoolcreator_common_header' => 'En-tête',
     'tr_melistoolcreator_common_content' => 'Contenu',
-    'tr_melistoolcreator_common_modal' => 'Modal'
+    'tr_melistoolcreator_common_modal' => 'Modal',
+
+    'tr_melistoolcreator_validator_none' => 'None',
+    'tr_melistoolcreator_validator_digit' => 'Digit',
+    'tr_melistoolcreator_validator_email' => 'Email',
+    'tr_melistoolcreator_validator_date' => 'Date',
+    'tr_melistoolcreator_tcf_table_type_data_table' => 'Simple',
+    'tr_melistoolcreator_tcf_table_type_ordered_data_table' => 'Ordered values',
+    'tr_melistoolcreator_tcf_table_type' => 'Type de table',
+    'tr_melistoolcreator_tcf_table_type_show_hide_data_table' => 'Show/Hide',
 ];

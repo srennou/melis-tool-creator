@@ -28,6 +28,7 @@ class PropertiesController extends MelisAbstractActionController
         $textMessage = $translator->translate('tr_moduletpl_unable_to_save');
         $errors = [];
 
+        /**@var HttpRequest $request */
         $request = $this->getRequest();
         $id = null;
         $entryTitle = null;
@@ -84,7 +85,9 @@ class PropertiesController extends MelisAbstractActionController
         $errors = [];
 
         $translator = $this->getServiceManager()->get('translator');
+        $moduleTplTable = $this->getServiceManager()->get('ModuleTplTable');
 
+        /**@var HttpRequest $request */
         $request = $this->getRequest();
         $formData = $request->getPost()->toArray();
 
@@ -102,6 +105,8 @@ class PropertiesController extends MelisAbstractActionController
 
 #TCDATEINPTDATA
 
+#TCORDERCHECK
+
             foreach ($formData As $input => $val)
                 if (empty($val) && !is_numeric($val))
                     $formData[$input] = null;
@@ -112,6 +117,8 @@ class PropertiesController extends MelisAbstractActionController
                 unset($formData['#TCKEY']);
 
             $moduleTplService = $this->getServiceManager()->get('ModuleTplService');
+#TCORDERSAVE
+
             $res = $moduleTplService->saveItem($formData, $id);
 
             if (!is_null($res)){
@@ -138,6 +145,7 @@ class PropertiesController extends MelisAbstractActionController
 
     public function deleteAction()
     {
+        /**@var HttpRequest $request */
         $request = $this->getRequest();
         $queryData = $request->getQuery()->toArray();
 

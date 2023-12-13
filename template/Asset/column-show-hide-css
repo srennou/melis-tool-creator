@@ -1,0 +1,4 @@
+.moduletpl-custom-form-check-group .form-check{
+    display: grid;
+    grid-template-columns: auto auto;
+  }

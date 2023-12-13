@@ -9,6 +9,7 @@
                             'hydrator'  => 'Laminas\Hydrator\ArraySerializableHydrator',
                             'elements' => [
 #FORMINPUTS
+#FORMINPUTORDORING
                             ],
                             'input_filter' => [
 #FORMINPUTFILTERS

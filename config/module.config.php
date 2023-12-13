@@ -82,6 +82,7 @@ return [
             'melis-tool-creator/step6'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step6.phtml',
             'melis-tool-creator/step7'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step7.phtml',
             'melis-tool-creator/step8'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step8.phtml',
+            'melis-tool-creator/step9'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step9.phtml',
         ],
         'template_path_stack' => [
             __DIR__ . '/../view',

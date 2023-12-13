@@ -1,93 +1,222 @@
-<style>
-    .tcf-lbl-balance{
-        height: 14px;
-    }
-</style>
 <div id="<?php echo $this->id; ?>" class="steps-content">
+
+    <?php
+        $form = $this->step6Form;
+        echo $this->form()->openTag($form);
+    ?>
+
     <div class="row">
-        <div class="col-sm-12 margin-bottom-10">
-            <h3><?php echo $this->translate('tr_melistoolcreator_cols_translations_title') ?></h3>
-            <p><?php echo $this->translate('tr_melistoolcreator_cols_translations_desc') ?></p>
+        <div class="col-sm-12">
+            <h3><?php echo $this->translate('tr_melistoolcreator_custom_translations_title') ?></h3>
+            <p><?php echo $this->translate('tr_melistoolcreator_custom_translations_desc') ?></p>
         </div>
-        <div class="col-xs-12 col-md-3">
-            <div class="product-text-tab-container">
-                <ul class="nav-tabs product-text-tab">
-                    <?php $ctr = 0; foreach ($this->languages As $key => $val):?>
-                        <li class="<?php echo ($ctr++) ?: 'active'?>">
-                            <a class="clearfix" data-toggle="tab" href="#toolcreator-text-transaltions-<?php echo $val['lang_locale']?>" aria-expanded="false">
-                                <?php echo $val['lang_label']?>
-                            </a>
-                        </li>
-                    <?php endforeach;?>
-                </ul>
-            </div>
+        <div class="col-sm-12">
+        <?php 
+            $fieldTypeTable = clone $form->get('tcf-tool-table-type');
+
+            echo($this->formElement($fieldTypeTable));
+        ?>
         </div>
-        <div class="col-xs-12 col-md-9">
-            <div class="tab-content">
-                <?php $ctr = 0; foreach ($this->step6Form As $key => $form):?>
-                    <div id="toolcreator-text-transaltions-<?php echo $key ?>" class="tab-pane <?php echo ($ctr++) ? '': 'active'?>">
+
+        <div class="col-sm-12">
+            <?php if ($this->langTblCols) { ?>
+                <h4><?php echo $this->translate('tr_melistoolcreator_pri_tbl_cols') ?></h4>
+            <?php } ?>
+            <div class="melis-toolcreator-steps-tbl-cols">
+                <div class="widget-body list table-responsive">
+                    <table class="table table-striped table-primary">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_type') ?></th>
+                                <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
+                                <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
+                                <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_filters') ?></th>
+                            </tr>
+                        </thead>
                         <?php
+                            $ctr = 1;
+                            foreach ($this->tableCols As $col){
+                                // dump($col['Field']);
+                                // Excluding field with Blob type
+                                if (!is_bool(strpos($col['Type'], 'blob')))
+                                    continue;
 
-                            foreach ($form As $tblType => $tblForm){
+                                $fieldValidators = clone $form->get('tcf-db-table-col-validator');
 
-                                if (count($form) > 1){
-                                    echo '<h4>'.$this->translate('tr_melistoolcreator_'.$tblType).'</h4>';
+                                $pk = in_array($col['Key'], ['PRI']) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
+
+
+                                $extraCol = '-';
+                                if (!empty($col['Extra']))
+                                    $extraCol = $col['Extra'];
+
+                                if (isset($col['isAutoIncrement'])){
+                                    $fieldValidators->setAttribute('class', 'hidden');
                                 }
 
-                                $tblForm->setAttribute('id', $tblForm->getAttribute('id').'-'.$tblType.'-'.$key);
-                                $tblForm->setAttribute('style', 'margin-bottom: 20px');
-                                $tblForm->prepare();
-
-                                echo $this->form()->openTag($tblForm);
-
-                                foreach ($tblForm->getElements() As $val){
-
-                                    if ($val->getOption('col-name'))
-                                        echo '<div class="row">';
-
-                                    if ($val->getLabel() || $val->getOption('col-desc')){
-                                        if (!empty($this->formElementErrors($val))){
-                                            $val->setLabelAttributes(array('class' => 'text-danger'));
-                                        }
-
-                                        if ($val->getOption('col-name'))
-                                            echo '<div class="col-md-4">';
-
-                                        if ($val->getOption('col-desc')){
-                                            $val->setLabel(' ');
-                                            $val->setLabelAttributes(array('class' => 'tcf-lbl-balance'));
-                                            echo '<div class="col-md-8">';
-                                        }
-
-                                        echo '<div class="form-group">';
-
-                                        if ($tblType == 'lang_tbl'){
-                                            // Removing language col prefix to display
-                                            $val->setLabel(str_replace('tclangtblcol_', '', $val->getLabel()));
-                                        }
-
-                                        echo $this->formLabel($val);
-                                    }
-
-                                    echo $this->formElement($val);
-
-                                    if ($val->getLabel() || $val->getOption('col-desc')){
-                                        echo $this->formElementErrors($val, array('class' => 'text-danger'));
-                                        echo '</div></div>';
-                                    }
-
-                                    if ($val->getOption('col-desc'))
-                                        echo '</div>';
+                                if (!is_bool(strpos($col['Type'], 'enum'))){
+                                    $fieldValidators = $form->get('tcf-db-table-col-validator');
                                 }
 
-                                echo $this->form()->closeTag();
+                                echo '<tr>
+                                        <td>'.$ctr++.'</td>
+                                        <td>'.$pk.'</td>
+                                        <td><b>'.$col['Field'].'</b></td>
+                                        <td>'.$col['Type'].'</td>
+                                        <td class="text-center">'.$col['Null'].'</td>
+                                        <td class="text-center">'.$extraCol.'</td>
+                                        <td class="text-center">
+                                            '.$this->formElement($fieldValidators).'
+                                        </td>
+                                    </tr>';
                             }
                         ?>
-                    </div>
-                <?php endforeach;?>
+                    </table>
+                </div>
             </div>
         </div>
+
+        <?php if ($this->langTblCols) { ?>
+            <div class="col-sm-12">
+                <h4><?php echo $this->translate('tr_melistoolcreator_lang_tbl_cols') ?></h4>
+                <div class="melis-toolcreator-steps-tbl-cols">
+                    <div class="widget-body list table-responsive">
+                        <table class="table table-striped table-primary">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
+                                    <th><?php echo $this->translate('tr_melistoolcreator_col_fk') ?></th>
+                                    <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
+                                    <th><?php echo $this->translate('tr_melistoolcreator_col_type') ?></th>
+                                    <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
+                                    <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
+                                    <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_editable') ?></th>
+                                    <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_mandatory') ?></th>
+                                    <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_field_type') ?></th>
+                                    <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_filters') ?></th>
+                                </tr>
+                            </thead>
+                            <?php
+                                $ctr = 1;
+                                foreach ($this->langTblCols As $col){
+
+                                    // Excluding field with Blob type
+                                    if (!is_bool(strpos($col['Type'], 'blob')))
+                                        continue;
+
+                                    // Adding prefix "tclangtblcol_" for language columns
+                                    $langCOls = 'tclangtblcol_'.$col['Field'];
+
+                                    $editableCheckBox = $form->get('tcf-db-table-col-editable')->setCheckedValue($langCOls);
+                                    $requiredCheckBox = $form->get('tcf-db-table-col-required')->setCheckedValue($langCOls);
+                                    $fieldType = clone $form->get('tcf-db-table-col-type');
+                                    $fieldValidators = clone $form->get('tcf-db-table-col-validator');
+
+                                    $pk = in_array($col['Key'], array('PRI')) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
+
+                                    $editableIcon = $col['editable'];
+                                    $requiredIcon = $col['required'];
+
+                                    $editableCheckBox->setChecked($col['editableIsChecked']);
+                                    $requiredCheckBox->setChecked($col['requiredIsChecked']);
+
+                                    $extraCol = '-';
+                                    if (!empty($col['Extra']))
+                                        $extraCol = $col['Extra'];
+
+                                    if (!is_null($col['fieldType']))
+                                        $fieldType->setValue($col['fieldType']);
+                                    else{
+                                        if (!$col['editableIsChecked'])
+                                            $fieldType->setAttribute('disabled', 'disabled');
+
+                                        foreach ($this->inputTypes As $type => $types)
+                                            if (in_array(preg_replace("/\([^)]+\)/", '', $col['Type']), $types))
+                                                $fieldType->setValue($type);
+                                    }
+                                    if (!is_null($col['fieldValidators']))
+                                        $fieldValidators->setValue($col['fieldValidators']);
+                                    else{
+                                        if (!$col['editableIsChecked'])
+                                            $fieldValidators->setAttribute('disabled', 'disabled');
+
+                                        foreach ($this->inputTypes As $type => $types)
+                                            if (in_array(preg_replace("/\([^)]+\)/", '', $col['Type']), $types))
+                                                $fieldValidators->setValue($type);
+                                    }
+                                    
+                                    $fk = null;
+                                    if ($editableIcon === 'AUTO_INCREMENT'){
+                                        $fieldType->setAttribute('class', 'hidden');
+                                        $fieldValidators->setAttribute('class', 'hidden');
+                                        $editableIcon = '';
+                                        $requiredIcon = '';
+                                    }elseif ($editableIcon === 'FK'){
+                                        $editableIcon = '';
+                                        $requiredIcon = '';
+                                        $fk = '<i class="fa fa-key fa-lg fa-rotate-90 fa-key-fk"></i>';
+                                        $fieldType->setAttribute('class', 'hidden');
+                                        $fieldValidators->setAttribute('class', 'hidden');
+                                    }
+
+                                    if (isset($col['isAutoIncrement']))
+                                        $fieldType->setAttribute('class', 'hidden');
+                                        $fieldValidators->setAttribute('class', 'hidden');
+
+                                    if (!is_bool(strpos($col['Type'], 'enum'))){
+                                        $form->add([
+                                            'name' => 'tcf-db-table-col-type',
+                                            'type' => 'MelisText',
+                                            'attributes' => [
+                                                'value' => 'Select',
+                                                'readonly' => 'readonly',
+                                            ]
+                                        ]);
+
+                                        $fieldType = $form->get('tcf-db-table-col-type');
+                                        $fieldValidators = $form->get('tcf-db-table-col-validator');
+
+                                    }
+
+                                    echo '<tr>
+                                            <td>'.$ctr++.'</td>
+                                            <td>'.$pk.'</td>
+                                            <td>'.$fk.'</td>
+                                            <td><b>'.$col['Field'].'</b></td>
+                                            <td>'.$col['Type'].'</td>
+                                            <td class="text-center">'.$col['Null'].'</td>
+                                            <td class="text-center">'.$extraCol.'</td>
+                                            <td class="text-center">
+                                                '.$editableIcon.'
+                                                '.$this->formElement($editableCheckBox).'
+                                            </td>
+                                            <td class="text-center">
+                                                '.$requiredIcon.'
+                                                '.$this->formElement($requiredCheckBox).'
+                                            </td>
+                                            <td class="text-center">
+                                                '.$this->formElement($fieldType).'
+                                            </td>
+                                            <td class="text-center">
+                                            '.$this->formElement($fieldValidators).'
+                                            </td>
+                                        </tr>';
+                                }
+                            ?>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
     </div>
+
+    <?php
+        echo $this->form()->closeTag();
+    ?>
 
     <button class="btn btn-default btn-steps" data-curstep="6" data-nxtstep="5"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
     <button class="btn btn-default float-right btn-steps tcf-validate" data-curstep="6" data-nxtstep="7"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>

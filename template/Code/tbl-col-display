@@ -1,5 +1,3 @@
-            foreach ($tableData As $key => $val){
-                foreach ($val As $col => $data){
+            foreach ($tableData As $key => &$tableRow){
 #TCCOLFILTERS
-                }
             }

@@ -1,0 +1,7 @@
+    $("body").on("change", "[name='moduletplcolumn']", function () {
+        var table = $('#moduletplTableContent').DataTable();
+        
+        let columnIdx = $(this).data('column');
+        let column = table.column(columnIdx);
+        column.visible($(this).prop('checked'));
+    });

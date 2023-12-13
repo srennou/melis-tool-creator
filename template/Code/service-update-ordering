@@ -1,0 +1,17 @@
+    public function updateOrdering($moduletplID, $moduletpl_order)
+    {
+        $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
+        $results = null;
+        
+        $moduleTplTable = $this->getServiceManager()->get('ModuleTplTable');
+        $data = array('moduletpl_order' => $arrayParameters['moduletpl_order']);
+        try{
+            $results = $moduleTplTable->save($data,$arrayParameters['moduletplID']);
+        }catch(\Exception $e){
+            echo $e->getMessage();
+        }
+         
+        $arrayParameters['results'] = $results;
+         
+        return $arrayParameters['results'];
+    }

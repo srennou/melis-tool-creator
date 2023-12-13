@@ -1,0 +1,105 @@
+<div id="<?php echo $this->id; ?>" class="steps-content">
+    <div class="row">
+        <div class="col-md-12">
+            <?php
+                if (!$this->finalized) {
+                    $form = $this->form;
+                    echo $this->form()->openTag($form);
+            ?>
+                    <div class="melis-tc-final-content">
+                        <h3><?php echo $this->translate('tr_melistoolcreator_finalization') ?></h3>
+                        <p><?php echo $this->translate('tr_melistoolcreator_finalization_desc') ?></p>
+                        <p>
+                            <i class="fa fa-check-square-o text-success fa-lg"></i>
+                            <?php echo $this->formElement($form->get('tcf-activate-tool')->setChecked(true)).' '.$this->translate('tr_melistoolcreator_finalization_activate_module') ?>
+                        </p>
+                        <p><?php echo $this->translate('tr_melistoolcreator_finalization_activation_note') ?></p>
+                    </div>
+            <?php
+                    echo $this->form()->closeTag();
+                }else{
+            ?>
+                <div class="alert alert-default" role="alert">
+
+                    <?php if ($this->frameworkSetupUrl){ ?>
+                        <div class="melis-tc-addtnal-setup">
+                            <i class="fa fa-cogs fa-5x fa-fw pull-left text-primary-custom"></i>
+                            <p><strong><?php echo $this->translate('tr_melistoolcreator_execute_aadtnl_setup') ?></strong></p>
+                            <p><?php echo $this->translate('tr_melistoolcreator_please_wait') ?><span></span></p>
+                        </div>
+                    <?php } ?>
+
+                    <div class="melis-tc-final <?php echo ($this->frameworkSetupUrl) ? 'hidden' : '' ?>">
+                        <i class="fa fa-thumbs-o-up fa-5x fa-fw pull-left text-primary-custom"></i>
+                        <p><strong><?php echo $this->translate('tr_melistoolcreator_finalization_success_title') ?></strong></p>
+                        <?php if ($this->restartRequired){ ?>
+                            <p id="tc-restart-msg"><?php echo $this->translate('tr_melistoolcreator_finalization_success_desc_with_counter') ?></p>
+                        <?php }else{ ?>
+                            <p><?php echo $this->translate('tr_melistoolcreator_finalization_success_desc') ?></p>
+                        <?php } ?>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
+
+    <?php if (!$this->finalized){ ?>
+        <button class="btn btn-default btn-steps" data-curstep="9" data-nxtstep="8"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
+        <button class="btn btn-default float-right btn-steps tcf-validate" data-curstep="9" data-nxtstep="9"><?php echo $this->translate('tr_melistoolcreator_finish') ?></button>
+    <?php } ?>
+
+    <script>
+
+    <?php if ($this->restartRequired){ ?>
+
+        var countdown = function(){
+            var tcResCd = parseInt($("#tc-restart-cd").text());
+            var countDown = setInterval(function() {
+                if (tcResCd < 1){
+                    $("#tc-restart-msg").text("<?php echo $this->translate('tr_melistoolcreator_refreshing') ?>");
+                    clearInterval(countDown);
+                    location.reload();
+                }else{
+                    $("#tc-restart-cd").text(tcResCd);
+                    tcResCd--;
+                }
+            }, 1000);
+        };
+    <?php } ?>
+
+    <?php if ($this->frameworkSetupUrl){ ?>
+
+        tcResCd = 0;
+        var wt = setInterval(function() {
+
+            $(".melis-tc-addtnal-setup span").text(".".repeat(tcResCd));
+
+            if (tcResCd > 2){
+                tcResCd = 0
+            }else{
+                tcResCd++;
+            }
+
+        }, 1000);
+
+        $.get("<?php echo $this->frameworkSetupUrl ?>", function(){
+            clearInterval(wt);
+        })
+        .done(function(res){
+
+            $(".melis-tc-addtnal-setup").hide();
+            $(".melis-tc-final").removeClass("hidden");
+
+            <?php if ($this->restartRequired){ ?>
+            countdown();
+            <?php } ?>
+
+        }).fail(function(){
+
+        });
+    <?php }elseif($this->restartRequired){ ?>
+        countdown();
+    <?php } ?>
+
+    </script>
+</div>

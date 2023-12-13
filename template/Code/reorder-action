@@ -1,0 +1,35 @@
+    public function reOrderAction()
+    {
+        /**@var HttpRequest $request */
+        $request = $this->getRequest();
+        // Default Values
+        $errors = array();
+        $status  = 0;
+        $textTitle = '';
+        $textMessage = '';
+
+        $moduletplSvc = $this->getServiceManager()->get('ModuleTplService');
+
+        if($request->isPost()) {
+            $postValues = $request->getPost()->toArray();
+
+            $order = explode(',', $postValues['OrderData']);
+
+            foreach ($order As $val){
+                $OrderTmp = explode('-', $val);
+                // Saving new Product Order
+                $moduletplSvc->updateOrdering($OrderTmp[0], ($OrderTmp[1] + 1));
+            }
+
+            $status = 1;
+        }
+
+        $response = array(
+            'success' => $status,
+            'textTitle' => $textTitle,
+            'textMessage' => $textMessage,
+            'errors' => $errors,
+        );
+
+        return new JsonModel($response);
+    }

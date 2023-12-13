@@ -20,8 +20,9 @@ return [
                         // table ID
                         'target' => '#tableToolModuleTpl',
                         'ajaxUrl' => '/melis/ModuleTpl/List/getList',
-                        'dataFunction' => '',
-                        'ajaxCallback' => '',
+                        'dataFunction' => 'initModuleTplList',
+                        'initComplete' => 'initcompleteModuleTplList()',
+                        'ajaxCallback' => 'ajaxCallbackModuleTplList()',
                         'filters' => [
                             'left' => [
                                 'moduletpl-tbl-filter-limit' => [
@@ -43,9 +44,11 @@ return [
                                     'controller' => 'List',
                                     'action' => 'render-table-filter-refresh',
                                 ],
+#TCSHOWHIDEFILTERPOSITION
                             ],
                         ],
                         'columns' => [
+#TCTABLEORDERCOLUMN
 #TCTABLECOLUMNS
                         ],
                         // define what columns can be used in searching

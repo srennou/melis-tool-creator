@@ -1,0 +1,13 @@
+#moduletplTableContent_filter input[type=search] {
+    width: 250%;
+    margin-left: 8%;
+}
+#moduletplTableContent_wrapper .dataTables_length label{
+    font-weight: 800;
+}
+#moduletplTableContent_wrapper #moduletplTableContent_filter label{
+    font-weight: 800;
+}
+#DRAGABLESTYLE
+
+#TCCCOLUMNSHOWHIDECSS

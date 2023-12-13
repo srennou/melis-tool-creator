@@ -33,7 +33,7 @@ class ListController extends MelisAbstractActionController
     {
         $view = new ViewModel();
 
-        $melisTool = $this->getServiceManager()->get('MelisCoreTool');
+        $melisTool = $this->getServiceManager()->get('ModuleTplToolService');
         $melisTool->setMelisToolKey('moduletpl', 'moduletpl_tools');
 
         $columns = $melisTool->getColumns();
@@ -41,14 +41,14 @@ class ListController extends MelisAbstractActionController
         $columns['actions'] = ['text' => $translator->translate('tr_moduletpl_common_table_column_action')];
 
         $view->tableColumns = $columns;
-        $view->toolTable = $melisTool->getDataTableConfiguration('#moduleTplTableContent', true, false, ['order' => [[ 0, 'desc' ]]]);
+#RENDERTOOLTABLE
 
         return $view;
     }
 
     public function getListAction()
     {
-        $melisTool = $this->getServiceManager()->get('MelisCoreTool');
+        $melisTool = $this->getServiceManager()->get('ModuleTplToolService');
         $melisTool->setMelisToolKey('moduletpl', 'moduletpl_tools');
 
         $moduleTplService = $this->getServiceManager()->get('ModuleTplService');
@@ -56,26 +56,27 @@ class ListController extends MelisAbstractActionController
         $draw = 0;
         $dataCount = 0;
         $tableData = [];
-
-        if($this->getRequest()->isPost()){
+        /**@var HttpRequest $request */
+        $request = $this->getRequest();
+        if($request->isPost()){
 
             // Get the locale used from meliscore session
             $container = new Container('meliscore');
             $langId = $container['melis-lang-id'];
 
-            $draw = $this->getRequest()->getPost('draw');
+            $draw = $request->getPost('draw');
 
-            $start = $this->getRequest()->getPost('start');
-            $length =  $this->getRequest()->getPost('length');
+            $start = $request->getPost('start');
+            $length =  $request->getPost('length');
 
-            $search = $this->getRequest()->getPost('search');
+            $search = $request->getPost('search');
             $search = $search['value'];
 
-            $selCol = $this->getRequest()->getPost('order');
+            $selCol = $request->getPost('order');
             $colId = array_keys($melisTool->getColumns());
             $selCol = $colId[$selCol[0]['column']];
 
-            $sortOrder = $this->getRequest()->getPost('order');
+            $sortOrder = $request->getPost('order');
             $sortOrder = $sortOrder[0]['dir'];
 
             $tableData = $moduleTplService->getList($start, $length, $melisTool->getSearchableColumns(), $search, $selCol, $sortOrder, $langId)->toArray();
@@ -103,6 +104,7 @@ class ListController extends MelisAbstractActionController
     {
         return new ViewModel();
     }
+#TCSHOWHIDEFILTERFUNCTION
 
     public function renderTableFilterSearchAction()
     {
@@ -125,6 +127,7 @@ class ListController extends MelisAbstractActionController
     }
 
 #TCMODALVIEWMODEL
+#TCREORDERACTION
 
     public function deleteItemAction()
     {

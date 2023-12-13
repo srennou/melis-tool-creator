@@ -55,6 +55,7 @@ class LanguageController extends MelisAbstractActionController
         $success = 0;
         $errors = [];
 
+        /**@var HttpRequest $request */
         $request = $this->getRequest();
         $postData = $request->getPost()->toArray();
 
@@ -123,6 +124,7 @@ class LanguageController extends MelisAbstractActionController
 
     public function deleteAction()
     {
+        /**@var HttpRequest $request */
         $request = $this->getRequest();
         $queryData = $request->getQuery()->toArray();
 

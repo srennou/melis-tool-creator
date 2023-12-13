@@ -1,6 +1,7 @@
         'aliases' => [
             // Service
             'ModuleTplService' => \ModuleTpl\Service\ModuleTplService::class,
+            'ModuleTplToolService' => \ModuleTpl\Service\ModuleTplToolService::class,
             // Table
             'ModuleTplTable' => \ModuleTpl\Model\Tables\ModuleTplTable::class
         ]

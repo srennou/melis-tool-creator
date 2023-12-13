@@ -440,7 +440,10 @@ return [
                                         'raw_view' => 'tr_melistoolcreator_select_raw_view',
                                         'char_length_limit' => 'tr_melistoolcreator_select_char_len_50',
                                         'dot_color' => 'tr_melistoolcreator_select_dot_color',
-                                        'admin_name' => 'tr_melistoolcreator_select_admin_name'
+                                        'admin_name' => 'tr_melistoolcreator_select_admin_name',
+                                        'date' => 'tr_melistoolcreator_select_date',
+                                        'date_time' => 'tr_melistoolcreator_select_date_time'
+
                                     ],
                                 ],
                                 'attributes' => [
@@ -592,6 +595,61 @@ return [
                     'elements' => [
                         [
                             'spec' => [
+                                'type' => 'Radio',
+                                'name' => 'tcf-tool-table-type',
+                                'options' => [
+                                    'label' => 'tr_melistoolcreator_tcf_table_type',
+                                    'tooltip' => 'tr_melistoolcreator_tcf_table_type_tooltip',
+                                    'radio-button' => true,
+                                    'label_options' => [
+                                        'disable_html_escape' => true,
+                                    ],
+                                    'value_options' => [
+                                        'dataTable' => 'tr_melistoolcreator_tcf_table_type_data_table',
+                                        'ordered' => 'tr_melistoolcreator_tcf_table_type_ordered_data_table',
+                                        'show_hide' => 'tr_melistoolcreator_tcf_table_type_show_hide_data_table',
+                                    ],
+                                ],
+                                'attributes' => [
+                                    'value' => 'dataTable',
+                                    'required' => 'required',
+                                ],
+                            ]
+                        ],
+                        [
+                            'spec' => [
+                                'name' => 'tcf-db-table-col-validator',
+                                'type' => 'Select',
+                                'options' => [
+                                    'value_options' => [
+                                        'none' => 'tr_melistoolcreator_validator_none',
+                                        'digit-validator' => 'tr_melistoolcreator_validator_digit',
+                                        'email-validator' => 'tr_melistoolcreator_validator_email',
+                                        'date-validator' => 'tr_melistoolcreator_validator_date',
+                                    ],
+                                ],
+                                'attributes' => [
+                                    'class' => 'form-control',
+                                    'meliscore-user-select2' => true,
+                                ]
+                            ],
+                        ],
+                    ],
+                    'input_filter' => [
+                    ],
+                ],
+                'melistoolcreator_step7_form' => [
+                    'attributes' => [
+                        'name' => 'tool-creator-step-7',
+                        'id' => 'tool-creator-step-7',
+                        'class' => 'tool-creator-step-7',
+                        'method' => 'POST',
+                        'action' => '',
+                    ],
+                    'hydrator'  => 'Laminas\Hydrator\ArraySerializableHydrator',
+                    'elements' => [
+                        [
+                            'spec' => [
                                 'name' => 'tcf-lang-local',
                                 'type' => 'Hidden',
                             ],
@@ -647,6 +705,43 @@ return [
                         'name' => 'tool-creator-step-8',
                         'id' => 'tool-creator-step-8',
                         'class' => 'tool-creator-step-8',
+                        'method' => 'POST',
+                        'action' => '',
+                    ],
+                    'hydrator'  => 'Laminas\Hydrator\ArraySerializableHydrator',
+                    'elements' => [
+                        [
+                            'spec' => [
+                                'name' => 'tcf-activate-tool',
+                                'type' => 'Checkbox',
+                                'options' => [
+                                    'use_hidden_element' => false,
+                                ],
+                                'attributes' => [
+                                    'class' => 'hidden'
+                                ]
+                            ],
+                        ],
+                    ],
+                    'input_filter' => [
+                        'tcf-activate-tool' => [
+                            'name'     => 'tcf-activate-tool',
+                            'required' => true,
+                            'validators' => [
+
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],
+                    ],
+                ],
+                'melistoolcreator_step9_form' => [
+                    'attributes' => [
+                        'name' => 'tool-creator-step-9',
+                        'id' => 'tool-creator-step-9',
+                        'class' => 'tool-creator-step-9',
                         'method' => 'POST',
                         'action' => '',
                     ],

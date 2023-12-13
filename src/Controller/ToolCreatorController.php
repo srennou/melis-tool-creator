@@ -123,16 +123,16 @@ class ToolCreatorController extends MelisAbstractActionController
             $post = $request->getPost();
             if (!empty($post['step-form']['tcf-tool-type'])){
                 if ($post['step-form']['tcf-tool-type'] == 'iframe'){
-                    $nxtStep = 7;
+                    $nxtStep = 8;
                 }
             }else{
                 if ($tcfDbTbl['step1']['tcf-tool-type'] == 'blank' && $nxtStep == 3){
-                    $nxtStep = 7;
+                    $nxtStep = 8;
                 }
             }
         }
 
-        if ($curStep == 7 && $nxtStep == 6){
+        if ($curStep == 8 && $nxtStep == 7){
             if (!empty($tcfDbTbl['step1']['tcf-tool-type']))
                 if ($tcfDbTbl['step1']['tcf-tool-type'] == 'iframe')
                     $nxtStep = 1;
@@ -147,6 +147,7 @@ class ToolCreatorController extends MelisAbstractActionController
         $stpFunction = 'renderStep'.$curStep;
 
         $viewVars = $this->$stpFunction($viewStp, $validate);
+
         /**
          * Checking if the view returns with error this view will display to show the errors message(s)
          * else this will call the next step and return to render
@@ -573,8 +574,8 @@ class ToolCreatorController extends MelisAbstractActionController
                             // Reset step 4, 5 and 6
                             unset($container['melis-toolcreator']['step4']);
                             unset($container['melis-toolcreator']['step5']);
-                            unset($container['melis-toolcreator']['step5']);
                             unset($container['melis-toolcreator']['step6']);
+                            unset($container['melis-toolcreator']['step7']);
                         }
                     }
 
@@ -909,6 +910,60 @@ class ToolCreatorController extends MelisAbstractActionController
         return $viewStp;
     }
 
+    public function renderStep6($viewStp, $validate = false)
+    {
+
+        // Tool creator session container
+        $container = new Container('melistoolcreator');
+        $tcfDbTbl = $container['melis-toolcreator']['step3']['tcf-db-table'];
+
+        // Step form fields
+        $melisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
+        $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step6_form', 'melistoolcreator_step6_form');
+
+        $factory = new \Laminas\Form\Factory();
+        $formElements = $this->getServiceManager()->get('FormElementManager');
+        $factory->setFormElementManager($formElements);
+        $step6Form = $factory->createForm($appConfigForm);
+
+        $viewStp->step6Form = $step6Form;
+
+        $request = $this->getRequest();
+        if ($validate){
+            unset($container['melis-toolcreator']['step6']);
+
+            $formData = $request->getPost()->toArray();
+
+            if(empty($formData['step-form'])){
+                // adding a variable to viewmodel to flag an error
+                $viewStp->hasError = true;
+                $viewStp->skipErrModal = true;
+            }else{
+                $container['melis-toolcreator']['step6'] = $formData['step-form'];
+            }
+        }
+
+        if (!empty($container['melis-toolcreator']['step6'])){
+            if (!empty($container['melis-toolcreator']['step6'])){
+                $viewStp->tblCols = $container['melis-toolcreator']['step6'];
+            }
+        }
+        /**
+         * Describe query to get the details of the Database table
+         *
+         * @var MelisToolCreatorService $toolCreatorSrv
+         */
+        $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+        $tableCols = $toolCreatorSrv->describeTable($tcfDbTbl);
+
+        $viewStp->tableCols = $this->tblColsFields($tableCols);
+
+        // Input Types
+        $config = $this->getServiceManager()->get('config');
+        $viewStp->inputTypes = $config['plugins']['melistoolcreator']['datas']['input_types'];
+
+        return $viewStp;
+    }
     /**
      * This method manage the Fifth step of the tool creator
      * This method manage the Tool fields for adding and updating
@@ -919,6 +974,7 @@ class ToolCreatorController extends MelisAbstractActionController
      */
     public function renderStep5($viewStp, $validate = false)
     {
+
         // Tool creator session container
         $container = new Container('melistoolcreator');
         $tcfDbTbl = $container['melis-toolcreator']['step3']['tcf-db-table'];
@@ -926,6 +982,7 @@ class ToolCreatorController extends MelisAbstractActionController
         // Step form fields
         $melisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
         $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step5_form', 'melistoolcreator_step5_form');
+
         $factory = new \Laminas\Form\Factory();
         $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
@@ -1100,7 +1157,7 @@ class ToolCreatorController extends MelisAbstractActionController
      * @param bool $validate - flag for validation
      * @return ViewModel
      */
-    public function renderStep6($viewStp, $validate = false)
+    public function renderstep7($viewStp, $validate = false)
     {
         $translator = $this->getServiceManager()->get('translator');
 
@@ -1177,14 +1234,14 @@ class ToolCreatorController extends MelisAbstractActionController
 
         // Step form fields
         $melisMelisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
-        $appConfigForm = $melisMelisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step6_form', 'melistoolcreator_step6_form');
+        $appConfigForm = $melisMelisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step7_form', 'melistoolcreator_step7_form');
         $factory = new \Laminas\Form\Factory();
         $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
 
         $hasErrorForm = [];
         $inputHasValue = [];
-        $step6Form = [];
+        $step7Form = [];
 
         $request = $this->getRequest();
 
@@ -1194,7 +1251,7 @@ class ToolCreatorController extends MelisAbstractActionController
 
             foreach ($selectedColumns As $tblType => $tblCols){
 
-                $step6FormTmp = $factory->createForm($appConfigForm);
+                $step7FormTmp = $factory->createForm($appConfigForm);
                 $inputFilter = new InputFilter();
 
                 /**
@@ -1206,7 +1263,7 @@ class ToolCreatorController extends MelisAbstractActionController
                     // Skip main talbe foriegn keys
 
                     // Column name
-                    $step6FormTmp->add([
+                    $step7FormTmp->add([
                         'name' => $col,
                         'type' => 'MelisText',
                         'options' => [
@@ -1239,7 +1296,7 @@ class ToolCreatorController extends MelisAbstractActionController
                     $inputFilter->add($input);
 
                     // Column name tooltip description
-                    $step6FormTmp->add([
+                    $step7FormTmp->add([
                         'name' => $col.'_tcinputdesc',
                         'type' => 'MelisText',
                         'options' => [
@@ -1262,18 +1319,18 @@ class ToolCreatorController extends MelisAbstractActionController
                     $inputFilter->add($inputDesc);
 
                     // Setup input filters to Form
-                    $step6FormTmp->setInputFilter($inputFilter);
+                    $step7FormTmp->setInputFilter($inputFilter);
                 }
 
                 if (!$validate){
-                    if (!empty($container['melis-toolcreator']['step6'])){
-                        if (!empty($container['melis-toolcreator']['step6'][$lang['lang_locale']][$tblType])){
-                            $step6FormTmp->setData($container['melis-toolcreator']['step6'][$lang['lang_locale']][$tblType]);
+                    if (!empty($container['melis-toolcreator']['step7'])){
+                        if (!empty($container['melis-toolcreator']['step7'][$lang['lang_locale']][$tblType])){
+                            $step7FormTmp->setData($container['melis-toolcreator']['step7'][$lang['lang_locale']][$tblType]);
                         }
                     }
 
-                    $step6FormTmp->get('tcf-lang-local')->setValue($lang['lang_locale']);
-                    $step6FormTmp->get('tcf-tbl-type')->setValue($tblType);
+                    $step7FormTmp->get('tcf-lang-local')->setValue($lang['lang_locale']);
+                    $step7FormTmp->get('tcf-tbl-type')->setValue($tblType);
                 }
 
                 if ($validate){
@@ -1281,7 +1338,7 @@ class ToolCreatorController extends MelisAbstractActionController
 
                     foreach ($formData['step-form'] As $val){
                         if ($val['tcf-lang-local'] == $lang['lang_locale'] && $val['tcf-tbl-type'] == $tblType){
-                            $step6FormTmp->setData($val);
+                            $step7FormTmp->setData($val);
                         }
                     }
 
@@ -1289,24 +1346,25 @@ class ToolCreatorController extends MelisAbstractActionController
                      * Just like in Step 2
                      * this will accept if of the of the form validated with no error(s)
                      */
-                    if(!$step6FormTmp->isValid()){
-                        if (empty($step6FormTmp))
-                            $hasErrorForm = $step6FormTmp->getMessages();
+                    if(!$step7FormTmp->isValid()){
+
+                        if (empty($step7FormTmp))
+                            $hasErrorForm = $step7FormTmp->getMessages();
                         else
-                            $hasErrorForm = ArrayUtils::merge($hasErrorForm, $step6FormTmp->getMessages());
+                            $hasErrorForm = ArrayUtils::merge($hasErrorForm, $step7FormTmp->getMessages());
                     }
 
                     // Getting input with data for Error preparation
-                    foreach ($step6FormTmp->getData() As $ckey => $kVal){
+                    foreach ($step7FormTmp->getData() As $ckey => $kVal){
                         if (!empty($kVal) && !in_array($ckey, $inputHasValue)){
                             array_push($inputHasValue, $ckey);
                         }
                     }
 
-                    $formDatas[$lang['lang_locale']][$tblType] = $step6FormTmp->getData();
+                    $formDatas[$lang['lang_locale']][$tblType] = $step7FormTmp->getData();
                 }
 
-                $step6Form[$lang['lang_locale']][$tblType] = $step6FormTmp;
+                $step7Form[$lang['lang_locale']][$tblType] = $step7FormTmp;
             }
 
             // Language label
@@ -1330,12 +1388,12 @@ class ToolCreatorController extends MelisAbstractActionController
         }
 
         if (empty($hasErrorForm) && $validate){
-            $container['melis-toolcreator']['step6'] = $formDatas;
+            $container['melis-toolcreator']['step7'] = $formDatas;
         }
 
         $viewStp->columns = $selectedColumns;
         $viewStp->languages = $languages;
-        $viewStp->step6Form = $step6Form;
+        $viewStp->step7Form = $step7Form;
 
         return $viewStp;
     }
@@ -1349,7 +1407,7 @@ class ToolCreatorController extends MelisAbstractActionController
      * @param bool $validate - flag for validation
      * @return ViewModel
      */
-    public function renderStep7($viewStp, $validate = false)
+    public function renderstep8($viewStp, $validate = false)
     {
         // Config
         $config = $this->getServiceManager()->get('config');
@@ -1386,11 +1444,11 @@ class ToolCreatorController extends MelisAbstractActionController
      * @param bool $validate - flag for validation
      * @return ViewModel
      */
-    public function renderStep8($viewStp, $validate = false)
+    public function renderstep9($viewStp, $validate = false)
     {
         // Step form fields
         $melisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
-        $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step8_form', 'melistoolcreator_step8_form');
+        $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step9_form', 'melistoolcreator_step9_form');
         $factory = new \Laminas\Form\Factory();
         $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);

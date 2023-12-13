@@ -1,3 +1,1 @@
-                    if ($col == '#TCCOLUMN'){
-                        $tableData[$key][$col] = $coreSrv->sendEvent('melis_tool_column_display_#TCCOLDISPLAY', ['data' => $data])['data'];
-                    }
+                $tableRow['#TCCOLUMN'] = $coreSrv->sendEvent('melis_tool_column_display_#TCCOLDISPLAY', ['data' => $tableRow['#TCCOLUMN']])['data'];

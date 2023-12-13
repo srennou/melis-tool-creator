@@ -1,0 +1,10 @@
+                                        [
+                                            'name' => 'Digits',
+                                            'options' => [
+                                                'messages' => [
+                                                    \Laminas\Validator\Digits::NOT_DIGITS => 'tr_moduletpl_err_not_Digits',
+                                                    \Laminas\Validator\Digits::STRING_EMPTY => 'tr_moduletpl_err_not_Digits',
+                                                    \Laminas\Validator\Digits::INVALID => 'tr_moduletpl_err_not_Digits',
+                                                ],
+                                            ],
+                                        ],

@@ -250,6 +250,7 @@ $(function(){
 
                 // Disabling field type select input
                 $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", true);
+                
             }
 
 

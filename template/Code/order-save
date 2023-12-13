@@ -1,0 +1,4 @@
+            if(empty($formData['moduletpl_order']) || is_null($formData['moduletpl_order'])){
+                $count = $moduleTplTable->getLastOrderNum()->current();
+                $formData['moduletpl_order'] = empty($count) ? 1 : $count->moduletpl_order + 1;
+            }

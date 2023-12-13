@@ -1,0 +1,24 @@
+<div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" id="moduletpldropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <?= $this->translate('tr_moduletpl_common_table_show_hide_column'); ?>
+    </button>
+    <div class="dropdown-menu" aria-labelledby="moduletpldropdownButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 34px, 0px);">
+        <div class="moduletpl-custom-form-check-group">
+
+            <?php 
+            $counter = 0;
+            foreach ($this->tableColumns as $key => $column) {
+                if (isset($column['css']) && isset($column['css']['visible']) && $column['css']['visible'] == false) {
+                    continue;
+                }
+            ?>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="moduletplcolumn" id="moduletplcolumn<?= $counter ?>" data-column="<?= $counter ?>" checked>
+                    <label class="form-check-label" for="moduletplcolumn<?= $counter ?>"><?= $this->translate($column['text']); ?></label>
+                </div>
+            <?php 
+        $counter++;
+        } ?>
+        </div>
+    </div>
+</div>

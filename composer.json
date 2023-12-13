@@ -3,10 +3,10 @@
 	"description": "Melis Platform Tool Creator",
 	"type": "melisplatform-module",
 	"license": "OSL-3.0",
-	"homepage": "https://github.com/melisplatform/melis-tool-creator",
+	"homepage": "https://github.com/srennou/custom-tool-creator",
 	"support": {
-		"source": "https://github.com/melisplatform/melis-tool-creator",
-		"issues": "https://github.com/melisplatform/melis-tool-creator/issues"
+		"source": "https://github.com/srennou/custom-tool-creator",
+		"issues": "https://github.com/srennou/custom-tool-creator/issues"
 	},
 	"keywords": [
 		"cms",

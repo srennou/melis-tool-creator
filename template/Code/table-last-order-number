@@ -1,0 +1,10 @@
+    public function getLastOrderNum()
+    {
+        $select = $this->getTableGateway()->getSql()->select();
+        $select->order('moduletpl_order DESC');
+        $select->limit(1);
+    
+        $resultData = $this->getTableGateway()->selectWith($select);
+    
+        return $resultData;
+    }

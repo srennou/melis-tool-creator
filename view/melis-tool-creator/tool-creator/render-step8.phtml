@@ -1,105 +1,221 @@
 <div id="<?php echo $this->id; ?>" class="steps-content">
-    <div class="row">
-        <div class="col-md-12">
-            <?php
-                if (!$this->finalized) {
-                    $form = $this->form;
-                    echo $this->form()->openTag($form);
-            ?>
-                    <div class="melis-tc-final-content">
-                        <h3><?php echo $this->translate('tr_melistoolcreator_finalization') ?></h3>
-                        <p><?php echo $this->translate('tr_melistoolcreator_finalization_desc') ?></p>
-                        <p>
-                            <i class="fa fa-check-square-o text-success fa-lg"></i>
-                            <?php echo $this->formElement($form->get('tcf-activate-tool')->setChecked(true)).' '.$this->translate('tr_melistoolcreator_finalization_activate_module') ?>
-                        </p>
-                        <p><?php echo $this->translate('tr_melistoolcreator_finalization_activation_note') ?></p>
-                    </div>
-            <?php
-                    echo $this->form()->closeTag();
-                }else{
-            ?>
-                <div class="alert alert-default" role="alert">
+    <?php if ($this->toolType == 'iframe'){ ?>
+        <h4>
+            <i class="fa <?php echo $this->steps['melistoolcreator_step1']['icon'] ?>"></i>
+            <?php echo $this->translate($this->steps['melistoolcreator_step1']['name']) ?>
+        </h4>
+        <h2 style="margin-left: 32px"><?php echo $this->datas['step1']['tcf-name'] ?></h2>
+        <br>
+        <h4>
+            <i class="fa fa-location-arrow"></i>
+            <?php echo $this->translate('tr_melistoolcreator_tcf-tool-iframe-url') ?>
+        </h4>
+        <h3 style="margin-left: 32px"><?php echo $this->datas['step1']['tcf-tool-iframe-url'] ?></h3>
+        <br>
+    <?php
+        }else{
 
-                    <?php if ($this->frameworkSetupUrl){ ?>
-                        <div class="melis-tc-addtnal-setup">
-                            <i class="fa fa-cogs fa-5x fa-fw pull-left text-primary-custom"></i>
-                            <p><strong><?php echo $this->translate('tr_melistoolcreator_execute_aadtnl_setup') ?></strong></p>
-                            <p><?php echo $this->translate('tr_melistoolcreator_please_wait') ?><span></span></p>
+            for ($i = 1; isset($this->datas['step'.$i]); $i++){
+            $key = 'step'.$i;
+            $step = $this->datas['step'.$i];
+        ?>
+            <div class="melis-tc-summary-item">
+                <h4>
+                    <i class="fa <?php echo $this->steps['melistoolcreator_'.$key]['icon'] ?>"></i>
+                    <?php echo $this->translate($this->steps['melistoolcreator_'.$key]['name']) ?>
+                </h4>
+                <div class="melis-tc-summary-item-content">
+                    <?php if ($key == 'step1'){ ?>
+                        <h2><?php echo $step['tcf-name'] ?></h2>
+                    <?php } elseif ($key == 'step2') { ?>
+                        <table class="table table-striped table-primary">
+                            <thead>
+                                <tr>
+                                    <th><?php $this->translate('tr_melistoolcreator_texts_title') ?></th>
+                                    <?php
+                                    foreach ($this->languages As $lang){
+                                        if (!empty($step[$lang['lang_locale']])) {
+                                            echo '<th>' . $lang['lang_name'] . '</th>';
+                                        }
+                                    }
+                                    ?>
+                                </tr>
+                            </thead>
+                            <?php
+                            $cols = array('tcf-title', 'tcf-desc');
+
+                            foreach ($cols As $col){
+                                echo '<tr>';
+                                echo '<td><b>' . $this->translate('tr_melistoolcreator_' . $col) . '</b></td>';
+
+                                foreach ($this->languages As $lang){
+
+                                    if (!empty($step[$lang['lang_locale']])){
+
+                                        $langTrans = '';
+                                        if (!empty($step[$lang['lang_locale']][$col])){
+                                            $langTrans = $step[$lang['lang_locale']][$col];
+                                        }
+
+                                        echo '<td>' . $langTrans . '</td>';
+                                    }
+                                }
+
+                                echo '</tr>';
+                            }
+                            ?>
+                        </table>
+
+                    <?php } elseif ($key == 'step3') { ?>
+                        <?php if (empty($step['tcf-db-table-has-language'])){?>
+                            <h4><i class="fa fa-table"></i> <?php echo $step['tcf-db-table'] ?></h4>
+                            <p><i class="fa fa-key fa-lg fa-rotate-90"></i> <?php echo $this->priCol ?></p>
+                        <?php }else{ ?>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-primary table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th><?php echo $this->translate('tr_melistoolcreator_pri_tbl') ?></th>
+                                            <th><?php echo $this->translate('tr_melistoolcreator_lang_tbl') ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tr>
+                                        <td>
+                                            <h4><i class="fa fa-table"></i> <?php echo $step['tcf-db-table'] ?></h4>
+                                            <p><i class="fa fa-key fa-lg fa-rotate-90"></i> <?php echo $this->priCol ?></p>
+                                        </td>
+                                        <td>
+                                            <h4><i class="fa fa-table"></i> <?php echo $step['tcf-db-table-language-tbl'] ?></h4>
+                                            <p><i class="fa fa-key fa-lg fa-rotate-90 fa-key-fk"></i> <?php echo $step['tcf-db-table-language-pri-fk'] ?></p>
+                                            <p><i class="fa fa-key fa-lg fa-rotate-90 fa-key-fk"></i> <?php echo $step['tcf-db-table-language-lang-fk'] ?></p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        <?php } ?>
+                    <?php } elseif ($key == 'step4') {?>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-primary table-bordered">
+                                <thead>
+                                <tr>
+                                    <?php
+                                        foreach ($step['tcf-db-table-cols'] As $col){
+                                            echo '<th>' . str_replace('tclangtblcol_', '', $col) . '</th>';
+                                        }
+                                    ?>
+                                </tr>
+                                </thead>
+                                <tr>
+                                    <?php
+                                        foreach ($step['tcf-db-table-cols'] As $col){
+                                            echo '<td> - </td>';
+                                        }
+                                    ?>
+                                </tr>
+                            </table>
+                        </div>
+                    <?php } elseif ($key == 'step5') { ?>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-primary">
+                                <thead>
+                                    <tr>
+                                        <th><?php echo $this->translate('tr_melistoolcreator_columns') ?></th>
+                                        <th><?php echo $this->translate('tr_melistoolcreator_col_mandatory') ?></th>
+                                        <th><?php echo $this->translate('tr_melistoolcreator_col_field_type') ?></th>
+                                    </tr>
+                                </thead>
+                                <?php
+                                    $editable = $step['tcf-db-table-col-editable'];
+                                    $required = $step['tcf-db-table-col-required'];
+                                    $fieldType = $step['tcf-db-table-col-type'];
+
+                                    foreach ($editable As $cKey => $cVol){
+
+                                        $isRequired = in_array($cVol, $required) ? '<i class="fa fa-check fa-lg text-success"></i>' : '';
+
+                                        $cVol = str_replace('tclangtblcol_', '', $cVol);
+
+                                        echo '<tr>';
+                                        echo '<td><b>' . $cVol . '</b></td>';
+                                        echo '<td>' . $isRequired . '</td>';
+                                        echo '<td>' . $fieldType[$cKey] . '</td>';
+                                        echo '</tr>';
+                                    }
+                                ?>
+                            </table>
+                        </div>
+                    <?php } elseif ($key == 'step7') { ?>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-primary">
+                                <thead>
+                                    <tr>
+                                        <th><?php echo $this->translate('tr_melistoolcreator_lang_txt') ?></th>
+                                        <th><?php echo $this->translate('tr_melistoolcreator_col_txt') ?></th>
+                                        <th><?php echo $this->translate('tr_melistoolcreator_name_txt') ?></th>
+                                        <th><?php echo $this->translate('tr_melistoolcreator_desc_txt') ?></th>
+                                    </tr>
+                                </thead>
+                                <?php
+                                    foreach ($this->languages As $lang){
+
+                                        $tblTypes = $step[$lang['lang_locale']];
+
+                                        $rwCols = '';
+                                        $rwLang = '';
+                                        $rwCtr = 0;
+                                        foreach ($tblTypes As $tKey => $tVal){
+
+                                            $cols = ['tcf-lang-local', 'tcf-tbl-type'];
+                                            foreach ($tVal As $cKey => $cVal){
+
+                                                $colName = str_replace('_tcinputdesc', '', $cKey);
+                                                $colName = str_replace('tclangtblcol_', '', $colName);
+
+                                                if (!in_array($cKey, $cols) && !strpos($cKey, '_tcinputdesc')){
+
+                                                    $colKeyPrefx = '';
+                                                    if ($tKey == 'lang_tbl')
+                                                        $colKeyPrefx = 'tclangtblcol_';
+
+                                                    if (!empty($cVal) || !empty($tVal[$colKeyPrefx.$colName.'_tcinputdesc'])){
+                                                        $rwCols .= '<tr>';
+
+                                                        if ($rwCtr < 1)
+                                                            $rwCols .= '<td rowspan="tcrowctr"><h3>'.$lang['lang_name'].'</h3></td>';
+
+                                                        $rwCols .= '<td><b>'.$colName.'</b></td>';
+                                                        $rwCols .= '<td>'.$cVal.'</td>';
+
+                                                        $desc = !empty($tVal[$colKeyPrefx.$colName.'_tcinputdesc']) ? $tVal[$colKeyPrefx.$colName.'_tcinputdesc'] : '-';
+                                                        $rwCols .= '<td>'.$desc.'</td>';
+                                                        $rwCols .= '</tr>';
+
+                                                        array_push($cols, $cKey);
+
+                                                        $rwCtr++;
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        $rwCols = str_replace('tcrowctr', $rwCtr, $rwCols);
+                                        echo $rwCols;
+                                    }
+                                ?>
+                            </table>
                         </div>
                     <?php } ?>
-
-                    <div class="melis-tc-final <?php echo ($this->frameworkSetupUrl) ? 'hidden' : '' ?>">
-                        <i class="fa fa-thumbs-o-up fa-5x fa-fw pull-left text-primary-custom"></i>
-                        <p><strong><?php echo $this->translate('tr_melistoolcreator_finalization_success_title') ?></strong></p>
-                        <?php if ($this->restartRequired){ ?>
-                            <p id="tc-restart-msg"><?php echo $this->translate('tr_melistoolcreator_finalization_success_desc_with_counter') ?></p>
-                        <?php }else{ ?>
-                            <p><?php echo $this->translate('tr_melistoolcreator_finalization_success_desc') ?></p>
-                        <?php } ?>
-                    </div>
                 </div>
-            <?php } ?>
-        </div>
-    </div>
-
-    <?php if (!$this->finalized){ ?>
-        <button class="btn btn-default btn-steps" data-curstep="8" data-nxtstep="7"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
-        <button class="btn btn-default float-right btn-steps tcf-validate" data-curstep="8" data-nxtstep="8"><?php echo $this->translate('tr_melistoolcreator_finish') ?></button>
+            </div>
+            <hr>
+            <?php
+                // Breaking loop for Blank tool type
+                if ($this->toolType == 'blank' && $key == 'step2')
+                    break;
+            ?>
+        <?php } ?>
     <?php } ?>
-
-    <script>
-
-    <?php if ($this->restartRequired){ ?>
-
-        var countdown = function(){
-            var tcResCd = parseInt($("#tc-restart-cd").text());
-            var countDown = setInterval(function() {
-                if (tcResCd < 1){
-                    $("#tc-restart-msg").text("<?php echo $this->translate('tr_melistoolcreator_refreshing') ?>");
-                    clearInterval(countDown);
-                    location.reload();
-                }else{
-                    $("#tc-restart-cd").text(tcResCd);
-                    tcResCd--;
-                }
-            }, 1000);
-        };
-    <?php } ?>
-
-    <?php if ($this->frameworkSetupUrl){ ?>
-
-        tcResCd = 0;
-        var wt = setInterval(function() {
-
-            $(".melis-tc-addtnal-setup span").text(".".repeat(tcResCd));
-
-            if (tcResCd > 2){
-                tcResCd = 0
-            }else{
-                tcResCd++;
-            }
-
-        }, 1000);
-
-        $.get("<?php echo $this->frameworkSetupUrl ?>", function(){
-            clearInterval(wt);
-        })
-        .done(function(res){
-
-            $(".melis-tc-addtnal-setup").hide();
-            $(".melis-tc-final").removeClass("hidden");
-
-            <?php if ($this->restartRequired){ ?>
-            countdown();
-            <?php } ?>
-
-        }).fail(function(){
-
-        });
-    <?php }elseif($this->restartRequired){ ?>
-        countdown();
-    <?php } ?>
-
-    </script>
+    <button class="btn btn-default btn-steps" data-curstep="8" data-nxtstep="7"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
+    <button class="btn btn-default float-right btn-steps tcf-validate" data-curstep="8" data-nxtstep="9"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>
 </div>

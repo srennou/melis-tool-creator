@@ -1,0 +1,3 @@
+                if(!empty($tableRow['#TCCOLUMN']) && !is_null($tableRow['#TCCOLUMN'])){
+                    $tableRow['#TCCOLUMN'] = date('Y-m-d H:i:s', strtotime($tableRow['#TCCOLUMN']));
+                }

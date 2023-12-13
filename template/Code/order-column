@@ -1,0 +1,5 @@
+                            'moduletpl_order' => [
+                                'text' => '<i class="fa fa-plus"> </i>',
+                                'css' => ['width' => '1%', 'padding-right' => '0', 'visible' => false],
+                                'sortable' => true,
+                            ],

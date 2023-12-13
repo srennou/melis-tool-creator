@@ -56,7 +56,8 @@ class MelisToolCreatorService  extends MelisGeneralService
             'config' => null,
             'language' => null,
             'public' => [
-                'js' => null
+                'js' => null,
+                'css' => null
             ],
             'src' => [
                 $moduleName => [
@@ -151,6 +152,9 @@ class MelisToolCreatorService  extends MelisGeneralService
                     case 'js':
                         $this->generateModuleJs($tempTargetDir);
                         break;
+                    case 'css':
+                        $this->generateModuleCss($tempTargetDir);
+                        break;
                     case 'language':
                         $this->generateModuleLanguages($tempTargetDir);
                         break;
@@ -159,6 +163,7 @@ class MelisToolCreatorService  extends MelisGeneralService
                         break;
                     case 'Service':
                         $this->generateModuleService($tempTargetDir);
+                        $this->generateModuleToolService($tempTargetDir);
                         break;
                 }
 
@@ -283,6 +288,7 @@ class MelisToolCreatorService  extends MelisGeneralService
         $tblSearchCols = '';
         $moduleForm = '';
         $tblActionButtons = '';
+        $tblOrdoringCols = '';
 
         if (!$this->isBlankTool()){
 
@@ -378,7 +384,7 @@ class MelisToolCreatorService  extends MelisGeneralService
             foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
 
                 $inptType = $this->tcSteps['step5']['tcf-db-table-col-type'][$key];
-
+                
                 switch ($inptType){
                     case 'Switch':
                         $formInputsTplContent = $this->fgc('/Form/switch-input');
@@ -482,6 +488,22 @@ class MelisToolCreatorService  extends MelisGeneralService
                                 if (in_array(preg_replace("/\([^)]+\)/", '', $ccol['Type']), $colNumTypes))
                                     array_push($formInputValidator, $this->fgc('/Form/number-validator'));
 
+                    $inptValidator = $this->tcSteps['step6']['tcf-db-table-col-validator'][$key];
+                    if($inptValidator != 'none'){
+                        switch ($inptValidator){
+                            case 'alpha-validator':
+                                array_push($formInputValidator, $this->fgc('/Form/alpha-validator'));
+                                break;
+                            case 'email-validator':
+                                array_push($formInputValidator, $this->fgc('/Form/email-validator'));
+                                break;
+                            case 'date-validator':
+                                array_push($formInputValidator, $this->fgc('/Form/date-validator'));
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                     $formInputFilterTplContent = $this->sp('#TCVALIDATORS', implode(','."\n", $formInputValidator), $formInputFilterTplContent);
 
                     $formInputFilterTplContent = $this->sp('#TCISREQUIRED', $inputIsRequired, $formInputFilterTplContent);
@@ -508,7 +530,10 @@ class MelisToolCreatorService  extends MelisGeneralService
             $moduleFormContent = $this->fgc('/Form/form');
             $moduleForm = $this->sp('#FORMINPUTS', implode(','."\n", $formInputs), $moduleFormContent);
             $moduleForm = $this->sp('#FORMINPUTFILTERS', implode(','."\n", $formInputFilters), $moduleForm);
-
+            if($this->isOrdredTable()){
+                $moduleForm = $this->sp('#FORMINPUTORDORING', implode(','."\n", $formInputFilters), $this->fgc('/Code/ordoring-input'));
+            }
+            
             $langForm = '';
             if ($this->hasLanguage()){
                 $formLang = $this->fgc('/Form/form-language');
@@ -523,7 +548,13 @@ class MelisToolCreatorService  extends MelisGeneralService
         $fileContent = $this->sp('#TCTABLESEARCHCOLUMNS', $tblSearchCols, $fileContent);
         $fileContent = $this->sp('#TCFORMELEMENTS', $moduleForm, $fileContent);
         $fileContent = $this->sp('#TCTABLEACTIONBUTTONS', $tblActionButtons, $fileContent);
+            
+        $orderCol = $this->isOrdredTable() ? $this->fgc('/Code/order-column') : '';
+        $fileContent = $this->sp('#TCTABLEORDERCOLUMN', $orderCol, $fileContent);
 
+        $showHideCol = $this->isShowHideTable() ? $this->fgc('/Code/show-hide-column') : '';
+        $fileContent = $this->sp('#TCSHOWHIDEFILTERPOSITION', $showHideCol, $fileContent);
+        
         $this->generateFile('app.tools.php', $targetDir, $fileContent);
     }
 
@@ -638,6 +669,12 @@ class MelisToolCreatorService  extends MelisGeneralService
             }
             $modulePropCtrlFile = $this->sp('#TCDATEINPTDATA', $dateDataFilter, $modulePropCtrlFile);
 
+            $ordercheck = $this->isOrdredTable() ? $this->fgc('/Code/order-check') : '';
+            $modulePropCtrlFile = $this->sp('#TCORDERCHECK', $ordercheck, $modulePropCtrlFile);
+
+            $ordersave = $this->isOrdredTable() ? $this->fgc('/Code/order-save') : '';
+            $modulePropCtrlFile = $this->sp('#TCORDERSAVE', $ordersave, $modulePropCtrlFile);
+            
             $modulePropCtrlFile = $this->sp('#TCKEY', $pk['Field'], $modulePropCtrlFile);
             $this->generateFile('PropertiesController.php', $targetDir, $modulePropCtrlFile);
 
@@ -682,6 +719,9 @@ class MelisToolCreatorService  extends MelisGeneralService
         $modalAction = ($this->getToolEditType() == 'modal') ? $this->fgc('/Code/modal-action') : '';
         $listCtrlFile = $this->sp('#TCMODALVIEWMODEL', $modalAction, $listCtrlFile);
 
+        $reoderAction = $this->isOrdredTable()? $this->fgc('/Code/reorder-action') : '';
+        $listCtrlFile = $this->sp('#TCREORDERACTION', $reoderAction, $listCtrlFile);
+
         // Column display filter flag
         $hasColDisplayFilter = false;
 
@@ -719,7 +759,13 @@ class MelisToolCreatorService  extends MelisGeneralService
             $emptyDataFilter = $this->sp('#TCTABLECOLDISPLAYFILTER', $tblColDisplay, $emptyDataFilter);
         }
         $listCtrlFile = $this->sp('#TCDATAEMPTYFILTER', $emptyDataFilter, $listCtrlFile);
-
+        if($this->isOrdredTable()){
+            $reorderRenderTableTool = $this->fgc('/Code/ordering-render-tool-table');
+        }elseif($this->isSimpleTable() || $this->isShowHideTable()){
+            $reorderRenderTableTool = $this->fgc('/Code/simple-render-tool-table');
+        }
+        $listCtrlFile = $this->sp('#RENDERTOOLTABLE', $reorderRenderTableTool, $listCtrlFile);
+        
 
         // Blob input field data filter
         $blobFields = [];
@@ -749,16 +795,27 @@ class MelisToolCreatorService  extends MelisGeneralService
         // Columns display
         $tblColDisplay = '';
         $tblColDisplayFilters = [];
+        $hasOnlyOrderDisplay = true;
         foreach ($this->tcSteps['step4']['tcf-db-table-cols'] As $key => $col){
             if (is_bool(strpos($col, 'tclangtblcol_')) && $this->tcSteps['step4']['tcf-db-table-col-display'][$key] != 'raw_view'){
+                $colTemple = '/Code/tbl-col-display-filter';
+                if($this->tcSteps['step4']['tcf-db-table-col-display'][$key] == 'date'){
+                    $colTemple = '/Code/tbl-col-display-date';
+                }elseif($this->tcSteps['step4']['tcf-db-table-col-display'][$key] == 'date_time'){
+                    $colTemple = '/Code/tbl-col-display-date-time';
+                }
+
                 $tblColDisplayFilters[] = $this->sp(
                     ['#TCCOLUMN', '#TCCOLDISPLAY'],
                     [$col, $this->tcSteps['step4']['tcf-db-table-col-display'][$key]],
-                    $this->fgc('/Code/tbl-col-display-filter')
+                    $this->fgc($colTemple)
                 );
+                $hasOnlyOrderDisplay = false;
             }
         }
-
+        if($this->isOrdredTable()){
+            $tblColDisplayFilters[] = $this->fgc('/Code/ordering-column');
+        }
         if (!empty($tblColDisplayFilters)){
             $hasColDisplayFilter = true;
             $tblColDisplay = $this->sp('#TCCOLFILTERS', implode(PHP_EOL, $tblColDisplayFilters) , $this->fgc('/Code/tbl-col-display'));
@@ -766,12 +823,15 @@ class MelisToolCreatorService  extends MelisGeneralService
 
         // Melis core event service
         $coreEventSrv = '';
-        if ($hasColDisplayFilter)
+        if ($hasColDisplayFilter && !$hasOnlyOrderDisplay)
             $coreEventSrv = '$coreSrv = $this->getServiceManager()->get(\'MelisGeneralService\');';
 
         $listCtrlFile = $this->sp('#TCCOREEVENTSERVICE', $coreEventSrv, $listCtrlFile);
         $listCtrlFile = $this->sp('#TCTABLECOLDISPLAYFILTER', $tblColDisplay, $listCtrlFile);
 
+        $showHideFunction = $this->isShowHideTable() ? $this->fgc('/Code/filter-column-selector-function') : '';
+        $listCtrlFile = $this->sp('#TCSHOWHIDEFILTERFUNCTION', $showHideFunction, $listCtrlFile);
+        
 
 
         $this->generateFile('ListController.php', $targetDir, $listCtrlFile);
@@ -824,7 +884,9 @@ class MelisToolCreatorService  extends MelisGeneralService
                     'tool-header',
                     'tool',
                 ];
-
+                if($this->isShowHideTable()){
+                    $listViews[] = 'table-filter-column-select';
+                }
                 if ($this->getToolEditType() == 'modal'){
                     $listViews[] = 'modal-form';
                     $propViews[] = 'properties-form';
@@ -948,6 +1010,7 @@ class MelisToolCreatorService  extends MelisGeneralService
             $saveScript = $this->fgc('/Asset/'.$this->getToolEditType().'-save');
             $ediBtnScript = $this->fgc('/Asset/'.$this->getToolEditType().'-edit-btn');
             $closeTabDelete = ($this->getToolEditType() == 'tab') ? $this->fgc('/Asset/tab-delete') : '';
+            $initTableContent = $this->isOrdredTable() ? $this->fgc('/Asset/init-table') : '';
             $langSave = ($this->hasLanguage()) ? $this->fgc('/Asset/'.$this->getToolEditType().'-lang-save'): '';
 
             $saveScript = $this->sp('#TCSAVELANG', $langSave, $saveScript);
@@ -961,6 +1024,10 @@ class MelisToolCreatorService  extends MelisGeneralService
             $fileContent = $this->sp('#TCSAVE', $saveScript, $fileContent);
             $fileContent = $this->sp('#TCEDIT', $ediBtnScript, $fileContent);
             $fileContent = $this->sp('#TCCLOSETABDELETE', $closeTabDelete, $fileContent);
+            $fileContent = $this->sp('#TCCINITTABLE', $initTableContent, $fileContent);
+            $showhidejs = $this->isShowHideTable() ? $this->fgc('/Asset/column-show-hide-js') : '';
+            $fileContent = $this->sp('#TCCCOLUMNSHOWHIDEJS', $showhidejs, $fileContent);
+            
             $this->generateFile('tool.js', $targetDir, $fileContent);
         }else{
             // @TODO Assets of third party tool
@@ -968,6 +1035,31 @@ class MelisToolCreatorService  extends MelisGeneralService
         }
     }
 
+    /**
+     * This method generate the Module Js assets
+     * used for add/update/delete of the entries of the tool
+     *
+     * @param $targetDir
+     */
+    private function generateModuleCss($targetDir)
+    {
+        if ($this->isBlankTool()) {
+            $fileContent = $this->fgc('/Asset/blank-tool.css');
+            $this->generateFile('tool.css', $targetDir, $fileContent);
+        }           
+
+        if ($this->isDbTool()) {
+            $fileContent = $this->fgc('/Asset/tool.css');
+            $dragablestyle = $this->isOrdredTable() ? $this->fgc('/Asset/dragable-style'): '';
+            $fileContent = $this->sp('#DRAGABLESTYLE', $dragablestyle, $fileContent);
+            $showhideCss = $this->isShowHideTable() ? $this->fgc('/Asset/column-show-hide-css') : '';
+            $fileContent = $this->sp('#TCCCOLUMNSHOWHIDECSS', $showhideCss, $fileContent);
+            $this->generateFile('tool.css', $targetDir, $fileContent);
+        }else{
+            // @TODO Assets of third party tool
+            return;
+        }
+    }
     /**
      * This method generate the Module Languages
      * this will use as translations of the tool
@@ -990,16 +1082,16 @@ class MelisToolCreatorService  extends MelisGeneralService
                 foreach ($commonTransTpl As $cKey => $cText)
                     $commonTranslations[$lang['lang_locale']][$cKey] = $translationsSrv->getMessage($cText, $lang['lang_locale']);
 
-                if (!empty($this->tcSteps['step6'][$lang['lang_locale']])){
+                if (!empty($this->tcSteps['step7'][$lang['lang_locale']])){
                     $inputTrans = [];
-                    foreach ($this->tcSteps['step6'][$lang['lang_locale']]['pri_tbl'] As $key => $trans)
+                    foreach ($this->tcSteps['step7'][$lang['lang_locale']]['pri_tbl'] As $key => $trans)
                         $inputTrans['input_'.$key] = $trans;
 
                     $commonTranslations[$lang['lang_locale']] = array_merge($commonTranslations[$lang['lang_locale']], $inputTrans);
 
-                    if (!empty($this->tcSteps['step6'][$lang['lang_locale']]['lang_tbl'])) {
+                    if (!empty($this->tcSteps['step7'][$lang['lang_locale']]['lang_tbl'])) {
                         $inputTrans = [];
-                        foreach ($this->tcSteps['step6'][$lang['lang_locale']]['lang_tbl'] As $key => $trans)
+                        foreach ($this->tcSteps['step7'][$lang['lang_locale']]['lang_tbl'] As $key => $trans)
                             $inputTrans['input_'.$key] = $trans;
 
                         $commonTranslations[$lang['lang_locale']] = array_merge($commonTranslations[$lang['lang_locale']], $inputTrans);
@@ -1153,6 +1245,13 @@ class MelisToolCreatorService  extends MelisGeneralService
         }
 
         $fileContent = $this->sp('#TCPJOINSYNTX', $JoinSyntx, $fileContent);
+        
+        $orderBY = $this->isOrdredTable() ? $this->fgc('/Code/table-order-by') : '';
+        $fileContent = $this->sp('#TCPORDERBY', $orderBY, $fileContent);
+
+        $orderBY = $this->isOrdredTable() ? $this->fgc('/Code/table-last-order-number') : '';
+        $fileContent = $this->sp('#TCPLASTORDERNUMBERFUNCTION', $orderBY, $fileContent);
+        
         $fileContent = $this->sp('#TCPPRIMARYTABLE', $this->tcSteps['step3']['tcf-db-table'], $fileContent);
 
         // Adding get-item-by-id function when the tool also has language enabled
@@ -1230,9 +1329,26 @@ class MelisToolCreatorService  extends MelisGeneralService
             $fileContent = str_replace('#SERVICESECTIONLANG', '', $fileContent);
         }
 
+        $updateOrderingFunction = $this->isOrdredTable() ? $this->fgc('/Code/service-update-ordering') : '';
+        $fileContent = str_replace('#SERVICEUPDATEORDERING', $updateOrderingFunction, $fileContent);
+        
         $this->generateFile($this->moduleName().'Service.php', $servicePath, $fileContent);
     }
+    /**
+     * Generates Toolservice file
+     * @param $targetDir
+     */
+    private function generateModuleToolService($targetDir)
+    {
+        if ($this->isFrameworkTool())
+            return;
 
+        // Service
+        $servicePath = $targetDir;
+        $fileContent = $this->fgc('/Service/toolservice');
+
+        $this->generateFile($this->moduleName().'ToolService.php', $servicePath, $fileContent);
+    }
     /**
      * This method generate files to the directory
      *
@@ -1274,7 +1390,18 @@ class MelisToolCreatorService  extends MelisGeneralService
     {
         return $this->tcSteps['step1']['tcf-tool-type'] == 'db' ? true : false;
     }
-
+    private function isSimpleTable()
+    {
+        return $this->tcSteps['step6']['tcf-tool-table-type'] == 'dataTable' ? true : false;
+    }
+    private function isOrdredTable()
+    {
+        return $this->tcSteps['step6']['tcf-tool-table-type'] == 'ordered' ? true : false;
+    }
+    private function isShowHideTable()
+    {
+        return $this->tcSteps['step6']['tcf-tool-table-type'] == 'show_hide' ? true : false;
+    }
     private function isIframeTool()
     {
         return $this->tcSteps['step1']['tcf-tool-type'] == 'iframe' ? true : false;

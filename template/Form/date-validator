@@ -1,0 +1,9 @@
+                                        [
+                                            'name' => 'Date',
+                                            'options' => [
+                                                'format' => 'Y-m-d',
+                                                'messages' => [
+                                                    \Laminas\Validator\Date::INVALID => 'tr_moduletpl_err_invalid_date',
+                                                ],
+                                            ],
+                                        ],

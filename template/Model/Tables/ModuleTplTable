@@ -56,25 +56,28 @@ class ModuleTplTable extends MelisGenericTable
             $select->where($filters);
         }
 
-        if ($orderKey == $this->idField)
+        if ($orderKey == $this->idField){
             $orderKey = 'DT_RowId';
-
-        if (!is_null($orderKey) && !$count)
+        }
+        if (!is_null($orderKey) && !$count){
             $select->order($orderKey.' '.$order);
-
-        if (!is_null($start))
+        }
+        if (!is_null($start)){
             $select->offset((int) $start);
-
-        if (!is_null($limit))
+        }
+        if (!is_null($limit)){
             $select->limit((int) $limit);
-
-        if (!$count) 
-        $select->group('DT_RowId');
+        }
+        if (!$count){
+            $select->group('DT_RowId');
+        }
+#TCPORDERBY
 
         $resultSet = $this->getTableGateway()->selectWith($select);
 
         return $resultSet;
     }
+#TCPLASTORDERNUMBERFUNCTION
 
 #GETITEMBYID
 }

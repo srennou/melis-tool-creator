@@ -3,6 +3,8 @@ $(function(){
 #TCADDBTN
     });
 
+#TCCCOLUMNSHOWHIDEJS
+
 #TCSAVE
 
     $("body").on("click", ".btnEditModuleTpl", function(){
@@ -36,3 +38,10 @@ $(function(){
             });
     });
 });
+window.initModuleTplList = function (data, tblSettings) {
+    #TCCINITTABLE
+}
+window.initcompleteModuleTplList = function (data) {
+}
+window.ajaxCallbackModuleTplList = function (oSettings) {
+}

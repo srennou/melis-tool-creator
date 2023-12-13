@@ -66,6 +66,9 @@ return [
     'tr_melistoolcreator_cols_translations' => 'Columns translations',
     'tr_melistoolcreator_cols_translations_title' => 'Table columns\' translations',
     'tr_melistoolcreator_cols_translations_desc' => 'These columns are used in the tool\'s list or in the edition form. <br>Enter the translations in the different languages. <br>The texts must be translated in at least one language',
+    'tr_melistoolcreator_custom_translations' => 'Customisation',
+    'tr_melistoolcreator_custom_translations_title' => 'Table Advance Customisation',
+    'tr_melistoolcreator_custom_translations_desc' => 'This Step is for advance customisation',
     'tr_melistoolcreator_summary' => 'Summary',
     'tr_melistoolcreator_finalization' => 'Finalization',
     'tr_melistoolcreator_finalization_desc' => 'Tick the box below if you wish to activate the tool upon creation',
@@ -93,6 +96,7 @@ return [
     'tr_melistoolcreator_col_editable' => 'Editable',
     'tr_melistoolcreator_col_mandatory' => 'Mandatory',
     'tr_melistoolcreator_col_field_type' => 'Input type',
+    'tr_melistoolcreator_col_filters' => 'Filters',
     'tr_melistoolcreator_columns' => 'Columns',
     'tr_melistoolcreator_columns_desciption' => 'Columns description',
     'tr_melistoolcreator_refreshing' => 'Resfreshing...',
@@ -126,6 +130,8 @@ return [
     'tr_melistoolcreator_select_lang_name' => 'Language',
     'tr_melistoolcreator_select_tpl_name' => 'Template',
     'tr_melistoolcreator_select_admin_name' => 'BO User',
+    'tr_melistoolcreator_select_date' => 'Date',
+    'tr_melistoolcreator_select_date_time' => 'DateTime',
     'tr_melistoolcreator_table_list_only_with_pk' => 'The tool creator can only display tables with a Primary Key and in Auto increment',
 
     // Forms
@@ -193,5 +199,15 @@ return [
 
     'tr_melistoolcreator_common_header' => 'Header',
     'tr_melistoolcreator_common_content' => 'Content',
-    'tr_melistoolcreator_common_modal' => 'Modal'
+    'tr_melistoolcreator_common_modal' => 'Modal',
+
+    'tr_melistoolcreator_validator_none' => 'None',
+    'tr_melistoolcreator_validator_digit' => 'Digit',
+    'tr_melistoolcreator_validator_email' => 'Email',
+    'tr_melistoolcreator_validator_date' => 'Date',
+    'tr_melistoolcreator_tcf_table_type_data_table' => 'Simple',
+    'tr_melistoolcreator_tcf_table_type_ordered_data_table' => 'Ordered values',
+    'tr_melistoolcreator_tcf_table_type' => 'Table Type',
+    'tr_melistoolcreator_tcf_table_type_show_hide_data_table' => 'Show/Hide',
+
 ];

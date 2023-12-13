@@ -40,4 +40,5 @@
         'header' => 'tr_melistoolcreator_common_header',
         'content' => 'tr_melistoolcreator_common_content',
         'modal' => 'tr_melistoolcreator_common_modal',
+		'common_table_show_hide_column' => 'tr_melistoolcreator_tcf_table_type_show_hide_data_table',
     ];

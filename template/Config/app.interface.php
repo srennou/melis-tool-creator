@@ -19,7 +19,9 @@ return [
                 'js' => [
                     '/ModuleTpl/js/tool.js'
                 ],
-                'css' => [],
+                'css' => [
+                    '/ModuleTpl/css/tool.css'
+                ],
                 /**
                  * the "build" configuration compiles all assets into one file to make
                  * lesser requests

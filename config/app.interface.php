@@ -62,14 +62,18 @@ return [
                         'icon' => 'fa-list-alt'
                     ],
                     'melistoolcreator_step6' => [
-                        'name' => 'tr_melistoolcreator_cols_translations',
+                        'name' => 'tr_melistoolcreator_custom_translations',
                         'icon' => 'fa-language'
                     ],
                     'melistoolcreator_step7' => [
+                        'name' => 'tr_melistoolcreator_cols_translations',
+                        'icon' => 'fa-language'
+                    ],
+                    'melistoolcreator_step8' => [
                         'name' => 'tr_melistoolcreator_summary',
                         'icon' => 'fa-list'
                     ],
-                    'melistoolcreator_step8' => [
+                    'melistoolcreator_step9' => [
                         'name' => 'tr_melistoolcreator_finalization',
                         'icon' => 'fa-cogs'
                     ]

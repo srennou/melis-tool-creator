@@ -168,7 +168,7 @@
                                             if (in_array(preg_replace("/\([^)]+\)/", '', $col['Type']), $types))
                                                 $fieldType->setValue($type);
                                     }
-
+                                    
                                     $fk = null;
                                     if ($editableIcon === 'AUTO_INCREMENT'){
                                         $fieldType->setAttribute('class', 'hidden');
@@ -195,6 +195,7 @@
                                         ]);
 
                                         $fieldType = $form->get('tcf-db-table-col-type');
+
                                     }
 
                                     echo '<tr>
