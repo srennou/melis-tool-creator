@@ -634,6 +634,24 @@ return [
                                 ]
                             ],
                         ],
+                        [
+                            'spec' => [
+                                'name' => 'tcf-db-table-col-filter',
+                                'type' => 'Select',
+                                'options' => [
+                                    'value_options' => [
+                                        'none' => 'tr_melistoolcreator_filter_none',
+                                        'select' => 'tr_melistoolcreator_filter_select',
+                                        'input' => 'tr_melistoolcreator_filter_input',
+                                        'date' => 'tr_melistoolcreator_filter_date',
+                                    ],
+                                ],
+                                'attributes' => [
+                                    'class' => 'form-control',
+                                    'meliscore-user-select2' => true,
+                                ]
+                            ],
+                        ],
                     ],
                     'input_filter' => [
                     ],

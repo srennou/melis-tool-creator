@@ -96,6 +96,7 @@ return [
     'tr_melistoolcreator_col_editable' => 'Editable',
     'tr_melistoolcreator_col_mandatory' => 'Mandatory',
     'tr_melistoolcreator_col_field_type' => 'Input type',
+    'tr_melistoolcreator_col_validators' => 'Validators',
     'tr_melistoolcreator_col_filters' => 'Filters',
     'tr_melistoolcreator_columns' => 'Columns',
     'tr_melistoolcreator_columns_desciption' => 'Columns description',
@@ -209,5 +210,9 @@ return [
     'tr_melistoolcreator_tcf_table_type_ordered_data_table' => 'Ordered values',
     'tr_melistoolcreator_tcf_table_type' => 'Table Type',
     'tr_melistoolcreator_tcf_table_type_show_hide_data_table' => 'Show/Hide',
+    'tr_melistoolcreator_filter_none' => 'None',
+    'tr_melistoolcreator_filter_select' => 'Select',
+    'tr_melistoolcreator_filter_input' => 'Input',
+    'tr_melistoolcreator_filter_date' => 'Date',
 
 ];

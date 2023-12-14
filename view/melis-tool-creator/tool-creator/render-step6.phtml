@@ -31,8 +31,7 @@
                                 <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
                                 <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
                                 <th><?php echo $this->translate('tr_melistoolcreator_col_type') ?></th>
-                                <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
-                                <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
+                                <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_validators') ?></th>
                                 <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_filters') ?></th>
                             </tr>
                         </thead>
@@ -45,20 +44,21 @@
                                     continue;
 
                                 $fieldValidators = clone $form->get('tcf-db-table-col-validator');
+                                $fieldFilters = clone $form->get('tcf-db-table-col-filter');
 
                                 $pk = in_array($col['Key'], ['PRI']) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
-
-
-                                $extraCol = '-';
-                                if (!empty($col['Extra']))
-                                    $extraCol = $col['Extra'];
-
                                 if (isset($col['isAutoIncrement'])){
                                     $fieldValidators->setAttribute('class', 'hidden');
+                                    $fieldFilters->setAttribute('class', 'hidden');
                                 }
+                                // if(in_array(strtolower($col['Type']), ['date', 'datetime', 'timestamp', 'time'])){
+                                //     dump($col);
+                                //     // $fieldFilters[''];
+                                // }
 
                                 if (!is_bool(strpos($col['Type'], 'enum'))){
                                     $fieldValidators = $form->get('tcf-db-table-col-validator');
+                                    $fieldFilters =  $form->get('tcf-db-table-col-filter');
                                 }
 
                                 echo '<tr>
@@ -66,10 +66,11 @@
                                         <td>'.$pk.'</td>
                                         <td><b>'.$col['Field'].'</b></td>
                                         <td>'.$col['Type'].'</td>
-                                        <td class="text-center">'.$col['Null'].'</td>
-                                        <td class="text-center">'.$extraCol.'</td>
                                         <td class="text-center">
                                             '.$this->formElement($fieldValidators).'
+                                        </td>
+                                        <td class="text-center">
+                                            '.$this->formElement($fieldFilters).'
                                         </td>
                                     </tr>';
                             }
@@ -92,12 +93,10 @@
                                     <th><?php echo $this->translate('tr_melistoolcreator_col_fk') ?></th>
                                     <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
                                     <th><?php echo $this->translate('tr_melistoolcreator_col_type') ?></th>
-                                    <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
-                                    <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
                                     <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_editable') ?></th>
                                     <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_mandatory') ?></th>
                                     <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_field_type') ?></th>
-                                    <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_filters') ?></th>
+                                    <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_validators') ?></th>
                                 </tr>
                             </thead>
                             <?php
@@ -115,6 +114,7 @@
                                     $requiredCheckBox = $form->get('tcf-db-table-col-required')->setCheckedValue($langCOls);
                                     $fieldType = clone $form->get('tcf-db-table-col-type');
                                     $fieldValidators = clone $form->get('tcf-db-table-col-validator');
+                                    $fieldFilters =  clone $form->get('tcf-db-table-col-filter');
 
                                     $pk = in_array($col['Key'], array('PRI')) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
 
@@ -123,10 +123,6 @@
 
                                     $editableCheckBox->setChecked($col['editableIsChecked']);
                                     $requiredCheckBox->setChecked($col['requiredIsChecked']);
-
-                                    $extraCol = '-';
-                                    if (!empty($col['Extra']))
-                                        $extraCol = $col['Extra'];
 
                                     if (!is_null($col['fieldType']))
                                         $fieldType->setValue($col['fieldType']);
@@ -179,6 +175,7 @@
 
                                         $fieldType = $form->get('tcf-db-table-col-type');
                                         $fieldValidators = $form->get('tcf-db-table-col-validator');
+                                        $fieldFilters = $form->get('tcf-db-table-col-filter');
 
                                     }
 
@@ -188,8 +185,6 @@
                                             <td>'.$fk.'</td>
                                             <td><b>'.$col['Field'].'</b></td>
                                             <td>'.$col['Type'].'</td>
-                                            <td class="text-center">'.$col['Null'].'</td>
-                                            <td class="text-center">'.$extraCol.'</td>
                                             <td class="text-center">
                                                 '.$editableIcon.'
                                                 '.$this->formElement($editableCheckBox).'
