@@ -38,7 +38,7 @@
                         <?php
                             $ctr = 1;
                             foreach ($this->tableCols As $col){
-                                // dump($col['Field']);
+
                                 // Excluding field with Blob type
                                 if (!is_bool(strpos($col['Type'], 'blob')))
                                     continue;
@@ -51,10 +51,10 @@
                                     $fieldValidators->setAttribute('class', 'hidden');
                                     $fieldFilters->setAttribute('class', 'hidden');
                                 }
-                                // if(in_array(strtolower($col['Type']), ['date', 'datetime', 'timestamp', 'time'])){
-                                //     dump($col);
-                                //     // $fieldFilters[''];
-                                // }
+                                if(in_array(strtolower($col['Type']), ['date', 'datetime', 'timestamp', 'time'])){
+                                    $fieldFilters->unsetValueOption('select');
+                                    $fieldFilters->unsetValueOption('input');
+                                }
 
                                 if (!is_bool(strpos($col['Type'], 'enum'))){
                                     $fieldValidators = $form->get('tcf-db-table-col-validator');

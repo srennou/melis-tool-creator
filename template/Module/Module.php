@@ -31,8 +31,8 @@ class Module
     {
         $config = array();
         $configFiles = array(
-            include __DIR__ . '/config/module.config.php',
-            include __DIR__ . '/config/app.toolstree.php',
+            include_once __DIR__ . '/config/module.config.php',
+            include_once __DIR__ . '/config/app.toolstree.php',
             #TCCONFIG
         );
 

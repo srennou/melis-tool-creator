@@ -101,16 +101,16 @@ class MelisToolCreatorService  extends MelisGeneralService
             if (!$this->isBlankTool() && !$this->isFrameworkTool())
                 $code = $this->fgc('/Code/module');
 
-            $config = 'include __DIR__ . \'/config/app.interface.php\',';
+            $config = 'include_once __DIR__ . \'/config/app.interface.php\',';
 
             if (!$this->isFrameworkTool())
-                $config .= PHP_EOL . "\t\t\t". 'include __DIR__ . \'/config/app.tools.php\',';
+                $config .= PHP_EOL . "\t\t\t". 'include_once __DIR__ . \'/config/app.tools.php\',';
 
             if (!$this->isFrameworkTool() && !$this->isBlankTool())
-                $config .= PHP_EOL . "\t\t\t".  'include __DIR__ . \'/config/app.microservice.php\',';
+                $config .= PHP_EOL . "\t\t\t".  'include_once __DIR__ . \'/config/app.microservice.php\',';
 
             if ($this->isFrameworkTool())
-                $config .= PHP_EOL . "\t\t\t". 'include __DIR__ . \'/config/app.framework.php\',';
+                $config .= PHP_EOL . "\t\t\t". 'include_once __DIR__ . \'/config/app.framework.php\',';
         }
 
         $moduleFile = $this->sp('#TCMODULE', $code, $moduleFile);
@@ -1036,8 +1036,7 @@ class MelisToolCreatorService  extends MelisGeneralService
     }
 
     /**
-     * This method generate the Module Js assets
-     * used for add/update/delete of the entries of the tool
+     * This method generate the Module Css assets
      *
      * @param $targetDir
      */
@@ -1333,6 +1332,25 @@ class MelisToolCreatorService  extends MelisGeneralService
         $fileContent = str_replace('#SERVICEUPDATEORDERING', $updateOrderingFunction, $fileContent);
         
         $this->generateFile($this->moduleName().'Service.php', $servicePath, $fileContent);
+    }
+    /**
+     * Generates DataTable filters  file
+     * @param $targetDir
+     */
+    private function generateDataTableFilters()
+    {
+        $template = '';
+        $inputFilters = $this->tcSteps['step6']['tcf-db-table-col-filter'];
+        if($inputFilters != 'none'){
+            if($inputFilters == 'none'){
+                // $this->fgc('/Form/alpha-validator')
+            }elseif($inputFilters == 'input'){
+
+            }elseif($inputFilters == 'date'){
+
+            }
+        }
+        return $template;
     }
     /**
      * Generates Toolservice file
