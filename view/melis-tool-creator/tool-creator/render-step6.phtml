@@ -90,11 +90,8 @@
                                 <tr>
                                     <th>#</th>
                                     <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
-                                    <th><?php echo $this->translate('tr_melistoolcreator_col_fk') ?></th>
                                     <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
                                     <th><?php echo $this->translate('tr_melistoolcreator_col_type') ?></th>
-                                    <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_editable') ?></th>
-                                    <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_mandatory') ?></th>
                                     <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_field_type') ?></th>
                                     <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_validators') ?></th>
                                 </tr>
@@ -110,9 +107,6 @@
                                     // Adding prefix "tclangtblcol_" for language columns
                                     $langCOls = 'tclangtblcol_'.$col['Field'];
 
-                                    $editableCheckBox = $form->get('tcf-db-table-col-editable')->setCheckedValue($langCOls);
-                                    $requiredCheckBox = $form->get('tcf-db-table-col-required')->setCheckedValue($langCOls);
-                                    $fieldType = clone $form->get('tcf-db-table-col-type');
                                     $fieldValidators = clone $form->get('tcf-db-table-col-validator');
                                     $fieldFilters =  clone $form->get('tcf-db-table-col-filter');
 
@@ -121,19 +115,6 @@
                                     $editableIcon = $col['editable'];
                                     $requiredIcon = $col['required'];
 
-                                    $editableCheckBox->setChecked($col['editableIsChecked']);
-                                    $requiredCheckBox->setChecked($col['requiredIsChecked']);
-
-                                    if (!is_null($col['fieldType']))
-                                        $fieldType->setValue($col['fieldType']);
-                                    else{
-                                        if (!$col['editableIsChecked'])
-                                            $fieldType->setAttribute('disabled', 'disabled');
-
-                                        foreach ($this->inputTypes As $type => $types)
-                                            if (in_array(preg_replace("/\([^)]+\)/", '', $col['Type']), $types))
-                                                $fieldType->setValue($type);
-                                    }
                                     if (!is_null($col['fieldValidators']))
                                         $fieldValidators->setValue($col['fieldValidators']);
                                     else{
@@ -147,20 +128,13 @@
                                     
                                     $fk = null;
                                     if ($editableIcon === 'AUTO_INCREMENT'){
-                                        $fieldType->setAttribute('class', 'hidden');
                                         $fieldValidators->setAttribute('class', 'hidden');
-                                        $editableIcon = '';
-                                        $requiredIcon = '';
                                     }elseif ($editableIcon === 'FK'){
-                                        $editableIcon = '';
-                                        $requiredIcon = '';
                                         $fk = '<i class="fa fa-key fa-lg fa-rotate-90 fa-key-fk"></i>';
-                                        $fieldType->setAttribute('class', 'hidden');
                                         $fieldValidators->setAttribute('class', 'hidden');
                                     }
 
                                     if (isset($col['isAutoIncrement']))
-                                        $fieldType->setAttribute('class', 'hidden');
                                         $fieldValidators->setAttribute('class', 'hidden');
 
                                     if (!is_bool(strpos($col['Type'], 'enum'))){
@@ -173,7 +147,6 @@
                                             ]
                                         ]);
 
-                                        $fieldType = $form->get('tcf-db-table-col-type');
                                         $fieldValidators = $form->get('tcf-db-table-col-validator');
                                         $fieldFilters = $form->get('tcf-db-table-col-filter');
 
@@ -186,18 +159,10 @@
                                             <td><b>'.$col['Field'].'</b></td>
                                             <td>'.$col['Type'].'</td>
                                             <td class="text-center">
-                                                '.$editableIcon.'
-                                                '.$this->formElement($editableCheckBox).'
-                                            </td>
-                                            <td class="text-center">
-                                                '.$requiredIcon.'
-                                                '.$this->formElement($requiredCheckBox).'
-                                            </td>
-                                            <td class="text-center">
-                                                '.$this->formElement($fieldType).'
-                                            </td>
-                                            <td class="text-center">
                                             '.$this->formElement($fieldValidators).'
+                                            </td>
+                                            <td class="text-center">
+                                            '.$this->formElement($fieldFilters).'
                                             </td>
                                         </tr>';
                                 }

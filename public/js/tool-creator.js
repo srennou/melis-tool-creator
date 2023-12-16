@@ -26,7 +26,7 @@ $(function(){
                  * This form contains input with the same name attribute of "tcf-db-table-cols"
                  */
                 var multInpt = "";
-                if ($.inArray(v.name, ["tcf-db-table-cols", "tcf-db-table-col-display", "tcf-db-table-col-editable", "tcf-db-table-col-required", "tcf-db-table-col-type", ""]) != -1){
+                if ($.inArray(v.name, ["tcf-db-table-cols", "tcf-db-table-col-display", "tcf-db-table-col-editable", "tcf-db-table-col-required", "tcf-db-table-col-type", "tcf-db-table-col-validator", "tcf-db-table-col-filter", ""]) != -1){
                     multInpt = "[]";
                 }
 

@@ -1,0 +1,11 @@
+<div class="dataTables_length" style="margin-bottom: 3em;" id="">
+    <label><?= $this->translate('tr_moduleTpl_profile'); ?>
+        <select name="moduleTpleprofile_filter" id="moduleTpleprofile_filter" aria-controls="moduleTplTableContent" class="form-control input-sm new_filter transLangFilter">
+            <option value="" selected><?= $this->translate('tr_moduleTpl_common_button_all'); ?></option>
+            <?php foreach($this->#TCCOLUMNs as $key => $value){?>
+                <option value="<?=$value?>"><?= $this->translate('tr_moduleTpl_'.$value); ?></option>
+
+            <?php }?>
+        </select>
+    </label>
+</div>

@@ -214,5 +214,6 @@ return [
     'tr_melistoolcreator_filter_select' => 'Select',
     'tr_melistoolcreator_filter_input' => 'Input',
     'tr_melistoolcreator_filter_date' => 'Date',
+	'tr_melistoolcreator_common_button_all' => 'All',
 
 ];

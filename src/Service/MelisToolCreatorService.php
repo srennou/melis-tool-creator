@@ -526,6 +526,64 @@ class MelisToolCreatorService  extends MelisGeneralService
                     array_push($langInputs, $formInputsTplContent);
                 }
             }
+            $strFilterConfig = [];
+            $strFilterController = [];
+            $strFilterJs = [];
+            $strFilterService = [];
+            $strFilterRender = [];
+            foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
+                $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key];
+
+                switch ($filterType){
+                    case 'select':
+                        $tableFilterView = $this->fgc('/Filter/select/filter-view');
+                        $tableFilterConfig = $this->fgc('/Filter/select/filter-config');
+                        $tableFilterController = $this->fgc('/Filter/select/filter-controller');
+                        $tableFilterJS = $this->fgc('/Filter/select/filter-js');
+                        $tableFilterService = $this->fgc('/Filter/select/filter-Table');
+                        $tableFilterRender = $this->fgc('/Filter/select/filter-render');
+                        break;
+                    case 'input':
+                        $tableFilterView = $this->fgc('/Filter/input/filter-view');
+                        $tableFilterConfig = $this->fgc('/Filter/input/filter-config');
+                        $tableFilterController = $this->fgc('/Filter/input/filter-controller');
+                        $tableFilterJS = $this->fgc('/Filter/input/filter-js');
+                        $tableFilterService = $this->fgc('/Filter/input/filter-Table');
+                        $tableFilterRender = $this->fgc('/Filter/input/filter-render');
+                        break;
+                    case 'date':
+                        $tableFilterView = $this->fgc('/Filter/date/filter-view');
+                        $tableFilterConfig = $this->fgc('/Filter/date/filter-config');
+                        $tableFilterController = $this->fgc('/Filter/date/filter-controller');
+                        $tableFilterJS = $this->fgc('/Filter/date/filter-js');
+                        $tableFilterService = $this->fgc('/Filter/date/filter-Table');
+                        $tableFilterRender = $this->fgc('/Filter/date/filter-render');
+                    default:
+                        $tableFilterView = '';
+                        $tableFilterConfig = '';
+                        $tableFilterController = '';
+                        $tableFilterJS = '';
+                        $tableFilterService = '';
+                        $tableFilterRender = '';
+                        break;
+                }
+                
+                $strFilterRender[] = $this->sp(
+                    ['#TCCOLUMN'],
+                    [$this->sp('tclangtblcol_', '', $col)],
+                    $tableFilterRender
+                );
+                $tableFilterView = $this->sp(
+                    ['#TCCOLUMN'],
+                    [$this->sp('tclangtblcol_', '', $col)],
+                    $tableFilterConfig
+                );
+            }
+            $strFilterConfig = implode(','."\n", $strFilterConfig);
+            $strFilterController = implode(','."\n", $strFilterController);
+            $strFilterJs = implode(','."\n", $strFilterJs);
+            $strFilterService = implode(','."\n", $strFilterService);
+            $strFilterRender = implode(','."\n", $strFilterRender);
 
             $moduleFormContent = $this->fgc('/Form/form');
             $moduleForm = $this->sp('#FORMINPUTS', implode(','."\n", $formInputs), $moduleFormContent);
@@ -871,7 +929,33 @@ class MelisToolCreatorService  extends MelisGeneralService
         mkdir($targetDir.'/'.$this->moduleViewName(), 0777);
 
         if ($this->isDbTool()){
-
+            $tableFilterView = [];
+            foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
+                $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key];
+                $colName = $this->sp('tclangtblcol_', '', $col);
+                $fileFilterName = 'table-filter-db-'.$filterType.'-'.$colName;
+                
+                switch ($filterType){
+                    case 'select':
+                        $templeFilter = '/Filter/select/filter-view';
+                        break;
+                    case 'input':
+                        $templeFilter = '/Filter/input/filter-view';
+                        break;
+                    case 'date':
+                        $templeFilter = '/Filter/date/filter-view';
+                    default:
+                        $templeFilter = '';
+                        break;
+                }
+                if(!empty($templeFilter)){
+                    $tableFilterView[$fileFilterName] = $this->sp(
+                        ['#TCCOLUMN'],
+                        [$colName],
+                        $this->fgc($templeFilter)
+                    );
+                }
+            }
             if (!$this->isFrameworkTool()){
                 // Common view file for tool
                 $listViews = [
@@ -886,6 +970,9 @@ class MelisToolCreatorService  extends MelisGeneralService
                 ];
                 if($this->isShowHideTable()){
                     $listViews[] = 'table-filter-column-select';
+                }
+                if(isset($tableFilterView) && !empty($tableFilterView)){
+                    $listViews[] = 'table-filter-db-column';
                 }
                 if ($this->getToolEditType() == 'modal'){
                     $listViews[] = 'modal-form';
@@ -977,6 +1064,11 @@ class MelisToolCreatorService  extends MelisGeneralService
                     $fileName = 'render-'.$file.'.phtml';
                 }
 
+                if($file == 'table-filter-db-column'){
+                    foreach($tableFilterView as $fileFilterName => $view){
+                        $this->generateFile($fileFilterName.'.phtml', $viewDir, $view);
+                    }
+                }
                 if (is_file($this->moduleTplDir.'/View/'.$fileName)){
                     $fileContent = $this->fgc('/View/'.$fileName);
                     // Renaming view file for tool properties

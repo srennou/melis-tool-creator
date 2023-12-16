@@ -1,0 +1,4 @@
+    public function renderTableFilter#TCCOLUMNAction()
+    {
+        return new ViewModel();
+    }

@@ -1,0 +1,4 @@
+<div class="customFilter row">
+    <label style="padding-right: 10px;" class="col"><?= $this->translate("tr_moduleTpl_#TCCOLUMN");?></label>
+    <input style="margin-right: 14px;margin-left: 0;max-width: 172px;" class="form-control input-sm col" type="text" name="moduleTpl_#TCCOLUMN" id="moduleTpl_#TCCOLUMN" value="" placeholder="">
+</div>
