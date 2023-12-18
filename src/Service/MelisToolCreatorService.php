@@ -863,12 +863,14 @@ class MelisToolCreatorService  extends MelisGeneralService
                     $tableFilterController = true;
                     $tableFilterParames = true;
                     $tableFilterRender = '/Filter/date/filter-render';
+                    break;
                 default:
-                    $tableFilterController = '';
+                    $tableFilterController = false;
                     $tableFilterParames = false;
                     $tableFilterRender = '';
                     break;
             }
+
             if($tableFilterController){
                 $strFilterController[] = $this->sp(
                     ['#TCCOLUMN'],
@@ -889,6 +891,7 @@ class MelisToolCreatorService  extends MelisGeneralService
                 $this->fgc($tableFilterRender)
             );
         }
+
         $strFilterController = implode("\n", $strFilterController);
         $strFilterParames = implode("", $strFilterParames);
         $strFilterRender = implode("\n", $strFilterRender);
@@ -962,6 +965,7 @@ class MelisToolCreatorService  extends MelisGeneralService
                         break;
                     case 'date':
                         $templeFilter = '/Filter/date/filter-view';
+                        break;
                     default:
                         $templeFilter = '';
                         break;
@@ -1144,21 +1148,22 @@ class MelisToolCreatorService  extends MelisGeneralService
                         break;
                     case 'date':
                         $tableFilterJS = '/Filter/date/filter-js';
+                        break;
                     default:
                         $tableFilterJS = '';
                         break;
                 }
-                $strFilterJs[] = empty($tableFilterJS) ? '' : $this->sp(
-                    ['#TCCOLUMN'],
-                    [$col['Field']],
-                    $this->fgc($tableFilterJS)
-                );
-                $strInitFilterJs[] = empty($tableFilterJS) ? '' : $this->sp(
-                    ['#TCCOLUMN'],
-                    [$col['Field']],
-                    $this->fgc('/Asset/filter-js-init')
-                );
                 if(!empty($tableFilterJS)){
+                    $strFilterJs[] = $this->sp(
+                        ['#TCCOLUMN'],
+                        [$col['Field']],
+                        $this->fgc($tableFilterJS)
+                    );
+                    $strInitFilterJs[] = $this->sp(
+                        ['#TCCOLUMN'],
+                        [$col['Field']],
+                        $this->fgc('/Asset/filter-js-init')
+                    );
                     $strInitCheckFilterJs[] = $this->sp(
                         ['#TCCOLUMN'],
                         [$col['Field']],
@@ -1170,8 +1175,8 @@ class MelisToolCreatorService  extends MelisGeneralService
             $strInitFilterJs = implode("\n", $strInitFilterJs);
             if(!empty($strInitCheckFilterJs)){
                 $filterFirstElement = array_shift($strInitCheckFilterJs);
-                $result = implode(" || ", $strInitCheckFilterJs);
-                $strInitCheckFilterJs = $filterFirstElement . $result;
+                $checkresult = implode(" || ", $strInitCheckFilterJs);
+                $strInitCheckFilterJs = $filterFirstElement . (!empty($checkresult)?(' || '.$checkresult):$checkresult);
                 $strInitFilterJs = "if(".$strInitCheckFilterJs."){\n".$strInitFilterJs."\n\t}";
             }else{
                 $strInitFilterJs = '';
@@ -1465,6 +1470,7 @@ class MelisToolCreatorService  extends MelisGeneralService
                     $tableQueryFunction = '';
                     $tableQueryFilter = '/Filter/date/filter-query';
                     $tableFilterParames = true;
+                    break;
                 default:
                     $tableQueryFunction = '';
                     $tableQueryFilter = '';
@@ -1567,6 +1573,7 @@ class MelisToolCreatorService  extends MelisGeneralService
                 case 'date':
                     $tableArrayParameters = true;
                     $tableFilterParames = true;
+                    break;
                 default:
                     $tableArrayParameters = false;
                     $tableFilterParames = false;
@@ -1593,25 +1600,6 @@ class MelisToolCreatorService  extends MelisGeneralService
         $fileContent = str_replace('#SERVICEPARAMES', $strFilterParames, $fileContent);
         $fileContent = str_replace('#SERVICEARRAYPARAMES', $strArrayParameters, $fileContent);
         $this->generateFile($this->moduleName().'Service.php', $servicePath, $fileContent);
-    }
-    /**
-     * Generates DataTable filters  file
-     * @param $targetDir
-     */
-    private function generateDataTableFilters()
-    {
-        $template = '';
-        $inputFilters = $this->tcSteps['step6']['tcf-db-table-col-filter'];
-        if($inputFilters != 'none'){
-            if($inputFilters == 'none'){
-                // $this->fgc('/Form/alpha-validator')
-            }elseif($inputFilters == 'input'){
-
-            }elseif($inputFilters == 'date'){
-
-            }
-        }
-        return $template;
     }
     /**
      * Generates Toolservice file

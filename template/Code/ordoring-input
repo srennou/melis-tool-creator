@@ -1,4 +1,4 @@
-                                [
+                                ,[
                                     'spec' => [
                                         'name' => 'moduletpl_order',
                                         'type' => 'Hidden',
