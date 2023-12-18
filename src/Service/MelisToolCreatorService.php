@@ -549,7 +549,7 @@ class MelisToolCreatorService  extends MelisGeneralService
         $fileContent = $this->fgc('/Config/app.tools.php');
 
         $strFilterConfig = [];
-        foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
+        foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
             $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key];
             if($filterType == 'select' || $filterType == 'input' || $filterType == 'date'){
                 $tableFilterConfig = '/Filter/filter-config';
@@ -558,7 +558,7 @@ class MelisToolCreatorService  extends MelisGeneralService
             }
             $strFilterConfig[] = empty($tableFilterConfig) ? '' : $this->sp(
                 ['#TCCOLUMNNAME', '#TCCOLUMN'],
-                [$this->changeStringFormatForView($this->sp('tclangtblcol_', '', $col)), $this->sp('tclangtblcol_', '', $col)],
+                [$this->changeStringFormatForView($col['Field']), $col['Field']],
                 $this->fgc($tableFilterConfig)
             );
         }
@@ -844,7 +844,7 @@ class MelisToolCreatorService  extends MelisGeneralService
         $strFilterController = [];
         $strFilterParames = [];
         $strFilterRender = [];
-        foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
+        foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
             $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key];
             $tableFilterParames = false;
             $tableFilterController = false;
@@ -872,20 +872,20 @@ class MelisToolCreatorService  extends MelisGeneralService
             if($tableFilterController){
                 $strFilterController[] = $this->sp(
                     ['#TCCOLUMN'],
-                    [$this->sp('tclangtblcol_', '', $col)],
+                    [$col['Field']],
                     $this->fgc('/Filter/filter-controller')
                 );
             }
             if($tableFilterParames){
                 $strFilterParames[] = $this->sp(
                     ['#TCCOLUMN'],
-                    [$this->sp('tclangtblcol_', '', $col)],
+                    [$col['Field']],
                     $this->fgc('/Filter/filter-parames')
                 );
             }
             $strFilterRender[] = empty($tableFilterRender) ? '' : $this->sp(
                 ['#TCCOLUMNNAME', '#TCCOLUMN'],
-                [$this->changeStringFormat($this->sp('tclangtblcol_', '', $col)), $this->sp('tclangtblcol_', '', $col)],
+                [$this->changeStringFormat($col['Field']), $col['Field']],
                 $this->fgc($tableFilterRender)
             );
         }
@@ -948,9 +948,9 @@ class MelisToolCreatorService  extends MelisGeneralService
 
         if ($this->isDbTool()){
             $tableFilterView = [];
-            foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
+            foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
                 $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key];
-                $colName = $this->sp('tclangtblcol_', '', $col);
+                $colName = $col['Field'];
                 $fileFilterName = 'render-table-filter-'.($this->changeStringFormatForView($colName));
                 
                 switch ($filterType){
@@ -1132,7 +1132,8 @@ class MelisToolCreatorService  extends MelisGeneralService
             $strFilterJs = [];
             $strInitCheckFilterJs = [];
             $strInitFilterJs = [];
-            foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
+
+            foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
                 $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key];
                 switch ($filterType){
                     case 'select':
@@ -1149,26 +1150,32 @@ class MelisToolCreatorService  extends MelisGeneralService
                 }
                 $strFilterJs[] = empty($tableFilterJS) ? '' : $this->sp(
                     ['#TCCOLUMN'],
-                    [$this->sp('tclangtblcol_', '', $col)],
+                    [$col['Field']],
                     $this->fgc($tableFilterJS)
                 );
                 $strInitFilterJs[] = empty($tableFilterJS) ? '' : $this->sp(
                     ['#TCCOLUMN'],
-                    [$this->sp('tclangtblcol_', '', $col)],
+                    [$col['Field']],
                     $this->fgc('/Asset/filter-js-init')
                 );
-                $strInitCheckFilterJs[] = empty($tableFilterJS) ? '' : $this->sp(
-                    ['#TCCOLUMN'],
-                    [$this->sp('tclangtblcol_', '', $col)],
-                    $this->fgc('/Asset/filter-js-check')
-                );
+                if(!empty($tableFilterJS)){
+                    $strInitCheckFilterJs[] = $this->sp(
+                        ['#TCCOLUMN'],
+                        [$col['Field']],
+                        $this->fgc('/Asset/filter-js-check')
+                    );
+                }
             }
             $strFilterJs = implode("\n", $strFilterJs);
             $strInitFilterJs = implode("\n", $strInitFilterJs);
-            $filterFirstElement = array_shift($strInitCheckFilterJs);
-            $result = implode(" || ", $strInitCheckFilterJs);
-            $strInitCheckFilterJs = $filterFirstElement . $result;
-            $strInitFilterJs = "if(".$strInitCheckFilterJs."){\n".$strInitFilterJs."\n\t}";
+            if(!empty($strInitCheckFilterJs)){
+                $filterFirstElement = array_shift($strInitCheckFilterJs);
+                $result = implode(" || ", $strInitCheckFilterJs);
+                $strInitCheckFilterJs = $filterFirstElement . $result;
+                $strInitFilterJs = "if(".$strInitCheckFilterJs."){\n".$strInitFilterJs."\n\t}";
+            }else{
+                $strInitFilterJs = '';
+            }
             $fileContent = $this->fgc('/Asset/tool.js');
             
             $fileContent = $this->sp('#TCFILTERINIT', $strInitFilterJs, $fileContent);
@@ -1544,7 +1551,7 @@ class MelisToolCreatorService  extends MelisGeneralService
         $fileContent = str_replace('#SERVICEUPDATEORDERING', $updateOrderingFunction, $fileContent);
         $strArrayParameters = [];
         $strFilterParames = [];
-        foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
+        foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
             $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key];
             $tableFilterParames = false;
             $tableArrayParameters = false;
@@ -1568,14 +1575,14 @@ class MelisToolCreatorService  extends MelisGeneralService
             if($tableFilterParames){
                 $strFilterParames[] = $this->sp(
                     ['#TCCOLUMN'],
-                    [$this->sp('tclangtblcol_', '', $col)],
+                    [$col['Field']],
                     $this->fgc('/Filter/filter-parames')
                 );
             }
             if($tableArrayParameters){
                 $strArrayParameters[] = $this->sp(
                     ['#TCCOLUMN'],
-                    [$this->sp('tclangtblcol_', '', $col)],
+                    [$col['Field']],
                     $this->fgc('/Filter/filter-array-parames')
                 );
             }
