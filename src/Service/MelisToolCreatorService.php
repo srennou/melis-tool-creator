@@ -78,7 +78,21 @@ class MelisToolCreatorService  extends MelisGeneralService
 
         // Generating sub dir and files of the module
         $this->generateModuleSubDirsAndFiles($moduleDirs, $moduleDir);
+        if($this->isOrdredTable()){
+            $hasOrderColumn = false;
+            $moduleName = strtolower($this->moduleName());
+            foreach($this->describeTable($this->tcSteps['step3']['tcf-db-table']) as $key => $col){
+                if($col['Field'] == ($moduleName.'_order')){
+                    $hasOrderColumn = true;
+                    break;
+                }
+            }
+            if(!$hasOrderColumn){
+                $tcfDbTbl = $this->tcSteps['step3']['tcf-db-table'];
+                $this->addOrderColumn($tcfDbTbl,$moduleName);
 
+            }
+        }
         // Send event
         $this->sendEvent('melis_tool_creator_generate_tool_end', $this->tcSteps);
 
@@ -1742,7 +1756,14 @@ class MelisToolCreatorService  extends MelisGeneralService
 
         return $tblCols;
     }
+    public function addOrderColumn($table,$moduleName)
+    {
+        $sql = "ALTER TABLE ".$table." ADD COLUMN ".($moduleName.'_order')." INT NOT NULL DEFAULT '0'";
+        $adapter = $this->getServiceManager()->get('Laminas\Db\Adapter\Adapter');
+        $tableAdapter = $adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
 
+        return true;
+    }
     public function describeTable($table)
     {
         $adapter = $this->getServiceManager()->get('Laminas\Db\Adapter\Adapter');
