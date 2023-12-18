@@ -1,0 +1,9 @@
+    public function get#TCCOLUMN()
+    {
+        $select = $this->getTableGateway()->getSql()->select();
+        $slct = [new Expression('DISTINCT(#TCCOLUMN) AS #TCCOLUMN')];
+        $select->columns($slct);
+        $resultSet = $this->getTableGateway()->selectWith($select);
+
+        return $resultSet;
+    }

@@ -4,7 +4,7 @@ $(function(){
     });
 
 #TCCCOLUMNSHOWHIDEJS
-
+#TCFILTERFUNCTION
 #TCSAVE
 
     $("body").on("click", ".btnEditModuleTpl", function(){
@@ -40,6 +40,7 @@ $(function(){
 });
 window.initModuleTplList = function (data, tblSettings) {
     #TCCINITTABLE
+    #TCFILTERINIT
 }
 window.initcompleteModuleTplList = function (data) {
 }

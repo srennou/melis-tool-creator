@@ -79,8 +79,9 @@ class ListController extends MelisAbstractActionController
             $sortOrder = $request->getPost('order');
             $sortOrder = $sortOrder[0]['dir'];
 
-            $tableData = $moduleTplService->getList($start, $length, $melisTool->getSearchableColumns(), $search, $selCol, $sortOrder, $langId)->toArray();
-            $dataCount = $moduleTplService->getList(null, null, $melisTool->getSearchableColumns(), $search, null, 'ASC', $langId, true)->current();
+#TCCOFILTERDATA
+            $tableData = $moduleTplService->getList($start, $length, $melisTool->getSearchableColumns(), $search, $selCol, $sortOrder, $langId, false#TCCOFILTERPARAMES)->toArray();
+            $dataCount = $moduleTplService->getList(null, null, $melisTool->getSearchableColumns(), $search, null, 'ASC', $langId, true#TCCOFILTERPARAMES)->current();
 
             #TCCOREEVENTSERVICE
 
@@ -105,6 +106,7 @@ class ListController extends MelisAbstractActionController
         return new ViewModel();
     }
 #TCSHOWHIDEFILTERFUNCTION
+#TCCOFILTERRENDERFUNCTIONS
 
     public function renderTableFilterSearchAction()
     {

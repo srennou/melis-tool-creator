@@ -21,7 +21,7 @@ class ModuleTplService extends MelisGeneralService
         #SERVICEGETITEMBYIDCONTENT
     }
 
-    public function getList($start = null, $limit = null, $searchKeys = [], $searchValue = null, $orderKey = null, $order = 'ASC', $langId = 1, $count = false)
+    public function getList($start = null, $limit = null, $searchKeys = [], $searchValue = null, $orderKey = null, $order = 'ASC', $langId = 1, $count = false#SERVICEPARAMES)
     {
         $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
         $arrayParameters = $this->sendEvent('moduletpl_service_get_list_start', $arrayParameters);
@@ -36,6 +36,7 @@ class ModuleTplService extends MelisGeneralService
             $arrayParameters['order'],
             $arrayParameters['langId'],
             $arrayParameters['count']
+#SERVICEARRAYPARAMES
         );
 
         $arrayParameters['results'] = $list;

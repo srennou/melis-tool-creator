@@ -1,0 +1,4 @@
+    $("body").on('change', '#moduleTpl#TCCOLUMN', function () {
+        var table = $("#moduletplTableContent").DataTable();
+        table.ajax.reload();
+    });

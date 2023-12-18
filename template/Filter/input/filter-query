@@ -1,0 +1,3 @@
+        if($#TCCOLUMN_filter) {
+            $select->where('#TCCOLUMN Like "%'.$#TCCOLUMN_filter.'%"');
+        }

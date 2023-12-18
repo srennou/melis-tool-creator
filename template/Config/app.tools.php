@@ -25,11 +25,7 @@ return [
                         'ajaxCallback' => 'ajaxCallbackModuleTplList()',
                         'filters' => [
                             'left' => [
-                                'moduletpl-tbl-filter-limit' => [
-                                    'module' => 'ModuleTpl',
-                                    'controller' => 'List',
-                                    'action' => 'render-table-filter-limit',
-                                ],
+#CONFIGFILTERDATA
                             ],
                             'center' => [
                                 'moduletpl-tbl-filter-search' => [
@@ -39,6 +35,11 @@ return [
                                 ],
                             ],
                             'right' => [
+                                'moduletpl-tbl-filter-limit' => [
+                                    'module' => 'ModuleTpl',
+                                    'controller' => 'List',
+                                    'action' => 'render-table-filter-limit',
+                                ],
                                 'moduletpl-tbl-filter-refresh' => [
                                     'module' => 'ModuleTpl',
                                     'controller' => 'List',

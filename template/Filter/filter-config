@@ -1,0 +1,5 @@
+                                'moduletpl-tbl-filter-#TCCOLUMNNAME' => [
+                                    'module' => 'ModuleTpl',
+                                    'controller' => 'List',
+                                    'action' => 'render-table-filter-#TCCOLUMNNAME',
+                                ],

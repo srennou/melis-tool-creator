@@ -1,8 +1,8 @@
-    public function renderTableFilter#TCCOLUMNAction()
+    public function renderTableFilter#TCCOLUMNNAMEAction()
     {
         $view = new ViewModel();
         $moduleTplTable = $this->getServiceManager()->get('ModuleTplTable');
-        $TCCOLUMNs = $moduleTplTable->get#TCCOLUMN();
-        $view->#TCCOLUMNs = $TCCOLUMNs;
-        return $view
+        $#TCCOLUMNs = $moduleTplTable->get#TCCOLUMN()->toArray();
+        $view->#TCCOLUMNs = $#TCCOLUMNs;
+        return $view;
     }
