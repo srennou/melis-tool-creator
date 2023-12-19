@@ -899,11 +899,13 @@ class MelisToolCreatorService  extends MelisGeneralService
                     $this->fgc('/Filter/filter-parames')
                 );
             }
-            $strFilterRender[] = empty($tableFilterRender) ? '' : $this->sp(
-                ['#TCCOLUMNNAME', '#TCCOLUMN'],
-                [$this->changeStringFormat($col['Field']), $col['Field']],
-                $this->fgc($tableFilterRender)
-            );
+            if(!empty($tableFilterRender)){
+                $strFilterRender[] = $this->sp(
+                    ['#TCCOLUMNNAME', '#TCCOLUMN'],
+                    [$this->changeStringFormat($col['Field']), $col['Field']],
+                    $this->fgc($tableFilterRender)
+                );
+            }
         }
 
         $strFilterController = implode("\n", $strFilterController);
@@ -1498,11 +1500,13 @@ class MelisToolCreatorService  extends MelisGeneralService
                     $this->fgc('/Filter/filter-parames')
                 );
             }
-            $strQueryFunction[] = empty($tableQueryFunction) ? '' :$this->sp(
-                ['#TCCOLUMN', '#TCCOLUMNUPPER'],
-                [$cols['Field'], $this->changeStringFormat($cols['Field'])],
-                $this->fgc($tableQueryFunction)
-            );
+            if(!empty($tableQueryFunction)){
+                $strQueryFunction[] = $this->sp(
+                    ['#TCCOLUMN', '#TCCOLUMNUPPER'],
+                    [$cols['Field'], $this->changeStringFormat($cols['Field'])],
+                    $this->fgc($tableQueryFunction)
+                );
+            }
             
             if($tableQueryFilter){
                 $strQueryFilter[] = $this->sp(
