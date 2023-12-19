@@ -51,6 +51,9 @@
                                     $fieldValidators->setAttribute('class', 'hidden');
                                     $fieldFilters->setAttribute('class', 'hidden');
                                 }
+                                if(isset($col['editableIsChecked']) && !$col['editableIsChecked']){
+                                    $fieldValidators->setAttribute('class', 'hidden');
+                                }
                                 if(in_array(strtolower($col['Type']), ['date', 'datetime', 'timestamp', 'time'])){
                                     $fieldFilters->unsetValueOption('select');
                                     $fieldFilters->unsetValueOption('input');
@@ -125,7 +128,9 @@
                                             if (in_array(preg_replace("/\([^)]+\)/", '', $col['Type']), $types))
                                                 $fieldValidators->setValue($type);
                                     }
-                                    
+                                    if(isset($col['editableIsChecked']) && !$col['editableIsChecked']){
+                                        $fieldValidators->setAttribute('class', 'hidden');
+                                    }
                                     $fk = null;
                                     if ($editableIcon === 'AUTO_INCREMENT'){
                                         $fieldValidators->setAttribute('class', 'hidden');
