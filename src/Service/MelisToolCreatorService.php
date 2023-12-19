@@ -502,7 +502,7 @@ class MelisToolCreatorService  extends MelisGeneralService
                                 if (in_array(preg_replace("/\([^)]+\)/", '', $ccol['Type']), $colNumTypes))
                                     array_push($formInputValidator, $this->fgc('/Form/number-validator'));
 
-                    $inptValidator = $this->tcSteps['step6']['tcf-db-table-col-validator'][$key];
+                    $inptValidator = $this->tcSteps['step6']['tcf-db-table-col-validator'][$key]??'none';
                     if($inptValidator != 'none'){
                         switch ($inptValidator){
                             case 'alpha-validator':
@@ -564,7 +564,7 @@ class MelisToolCreatorService  extends MelisGeneralService
 
         $strFilterConfig = [];
         foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
-            $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key];
+            $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
             if($filterType == 'select' || $filterType == 'input' || $filterType == 'date'){
                 $tableFilterConfig = '/Filter/filter-config';
             }else{
@@ -859,7 +859,7 @@ class MelisToolCreatorService  extends MelisGeneralService
         $strFilterParames = [];
         $strFilterRender = [];
         foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
-            $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key];
+            $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
             $tableFilterParames = false;
             $tableFilterController = false;
             switch ($filterType){
@@ -966,7 +966,7 @@ class MelisToolCreatorService  extends MelisGeneralService
         if ($this->isDbTool()){
             $tableFilterView = [];
             foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
-                $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key];
+                $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
                 $colName = $col['Field'];
                 $fileFilterName = 'render-table-filter-'.($this->changeStringFormatForView($colName));
                 
@@ -1152,7 +1152,7 @@ class MelisToolCreatorService  extends MelisGeneralService
             $strInitFilterJs = [];
 
             foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
-                $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key];
+                $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
                 switch ($filterType){
                     case 'select':
                         $tableFilterJS = '/Filter/select/filter-js';
@@ -1466,7 +1466,7 @@ class MelisToolCreatorService  extends MelisGeneralService
         $strFilterParames = [];
 
         foreach ($selectedTbl As $key => $cols){
-            $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key];
+            $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
             $tableFilterParames = false;
             $tableQueryFilter = false;
             switch ($filterType){
@@ -1572,7 +1572,7 @@ class MelisToolCreatorService  extends MelisGeneralService
         $strArrayParameters = [];
         $strFilterParames = [];
         foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
-            $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key];
+            $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
             $tableFilterParames = false;
             $tableArrayParameters = false;
             switch ($filterType){
