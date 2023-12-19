@@ -8,6 +8,10 @@
 #moduletplTableContent_wrapper #moduletplTableContent_filter label{
     font-weight: 800;
 }
+#filtertableTableContent_wrapper label{
+    font-weight: 800;
+}
+
 #DRAGABLESTYLE
 
 #TCCCOLUMNSHOWHIDECSS
