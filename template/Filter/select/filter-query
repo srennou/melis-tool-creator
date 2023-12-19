@@ -1,3 +1,3 @@
-        if($#TCCOLUMN_filter) {
+        if(!is_null$#TCCOLUMN_filter)) {
             $select->where('#TCCOLUMN = "'.$#TCCOLUMN_filter.'"');
         }
