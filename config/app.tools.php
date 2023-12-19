@@ -599,10 +599,13 @@ return [
                                 'name' => 'tcf-tool-table-type',
                                 'options' => [
                                     'label' => 'tr_melistoolcreator_tcf_table_type',
-                                    'tooltip' => 'tr_melistoolcreator_tcf_table_type_tooltip',
+                                    'tooltip' => 'tr_melistoolcreator_tcf_table_type tooltip',
                                     'radio-button' => true,
                                     'label_options' => [
                                         'disable_html_escape' => true,
+                                    ],
+                                    'label_attributes' => [
+                                        'class' => 'melis-radio-box'
                                     ],
                                     'value_options' => [
                                         'dataTable' => 'tr_melistoolcreator_tcf_table_type_data_table',
