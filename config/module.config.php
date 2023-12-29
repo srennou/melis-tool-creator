@@ -91,6 +91,11 @@ return [
             'ViewJsonStrategy',
         ],
     ],
+    'form_elements' => [
+        'factories' => [
+            'MelisToolCreatorSelect2Factory'     => \MelisToolCreator\Form\Factory\MelisToolCreatorSelect2Factory::class,
+        ],
+    ],
     'caches' => [
         'toolcreator_database' => [
             'active' => true, // activate or deactivate Melis Cache for this conf

@@ -622,18 +622,11 @@ return [
                         [
                             'spec' => [
                                 'name' => 'tcf-db-table-col-validator',
-                                'type' => 'Select',
-                                'options' => [
-                                    'value_options' => [
-                                        'none' => 'tr_melistoolcreator_validator_none',
-                                        'digit-validator' => 'tr_melistoolcreator_validator_digit',
-                                        'email-validator' => 'tr_melistoolcreator_validator_email',
-                                        'date-validator' => 'tr_melistoolcreator_validator_date',
-                                    ],
-                                ],
+                                'type' => 'MelisToolCreatorSelect2Factory',
                                 'attributes' => [
+                                    'multiple' => true,
+                                    'required' => false,
                                     'class' => 'form-control',
-                                    'meliscore-user-select2' => true,
                                 ]
                             ],
                         ],
@@ -651,7 +644,6 @@ return [
                                 ],
                                 'attributes' => [
                                     'class' => 'form-control',
-                                    'meliscore-user-select2' => true,
                                 ]
                             ],
                         ],

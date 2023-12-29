@@ -58,11 +58,29 @@
                                     $fieldFilters->unsetValueOption('select');
                                     $fieldFilters->unsetValueOption('input');
                                 }
-
+                                
+                                if(isset($col['ValidatorType']) && !is_null($col['ValidatorType'])){
+                                    $fieldValidators->setValue($col['ValidatorType']);
+                                }
+                                if(isset($col['filterType']) && !is_null($col['filterType'])){
+                                    $fieldFilters->setValue($col['filterType']);
+                                }
+                                
                                 if (!is_bool(strpos($col['Type'], 'enum'))){
                                     $fieldValidators = $form->get('tcf-db-table-col-validator');
                                     $fieldFilters =  $form->get('tcf-db-table-col-filter');
                                 }
+                                
+                                    $slct2Id = 'selec2-'.uniqid();
+                                    $attrib = $fieldValidators->getAttributes();
+                                    $fieldValidators->setAttribute('data-slct2-id', $slct2Id);
+                                    $formfieldValidators = '<div class="form-group">
+                                                    '.$this->formElement($fieldValidators).'
+                                                    </div>';
+                                    $formfieldValidators .= '<script type="text/javascript">';
+                                    $formfieldValidators .= '$("select[data-slct2-id=\''.$slct2Id.'\']").select2();';
+                                    $formfieldValidators .= '$("select[data-slct2-id=\''.$slct2Id.'\']").next("span").css("width", "100%");';
+                                    $formfieldValidators .= '</script>'; 
 
                                 echo '<tr>
                                         <td>'.$ctr++.'</td>
@@ -70,7 +88,7 @@
                                         <td><b>'.$col['Field'].'</b></td>
                                         <td>'.$col['Type'].'</td>
                                         <td class="text-center">
-                                            '.$this->formElement($fieldValidators).'
+                                            '.($formfieldValidators).'
                                         </td>
                                         <td class="text-center">
                                             '.$this->formElement($fieldFilters).'
@@ -118,6 +136,7 @@
                                     $editableIcon = $col['editable'];
                                     $requiredIcon = $col['required'];
 
+                                        
                                     if (!is_null($col['fieldValidators']))
                                         $fieldValidators->setValue($col['fieldValidators']);
                                     else{

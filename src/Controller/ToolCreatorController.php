@@ -1116,7 +1116,18 @@ class ToolCreatorController extends MelisAbstractActionController
                     }
                 }
             }
-
+            if (!empty($container['melis-toolcreator']['step6'])){
+                if (isset($container['melis-toolcreator']['step6']['tcf-db-table-col-validator'])){
+                    if (isset($container['melis-toolcreator']['step6']['tcf-db-table-col-validator'][$key])){
+                        $tableCols[$key]['ValidatorType'] = $container['melis-toolcreator']['step6']['tcf-db-table-col-validator'][$key];
+                    }
+                }
+                if (isset($container['melis-toolcreator']['step6']['tcf-db-table-col-filter'])){
+                    if (isset($container['melis-toolcreator']['step6']['tcf-db-table-col-filter'][$key])){
+                        $tableCols[$key]['filterType'] = $container['melis-toolcreator']['step6']['tcf-db-table-col-filter'][$key];
+                    }
+                }
+            }
             // Language Foreign keys
             if (!empty($container['melis-toolcreator']['step3']['tcf-db-table-has-language']) && $val['Key'] != 'PRI'){
                 if (in_array($val['Field'], [$container['melis-toolcreator']['step3']['tcf-db-table-language-pri-fk'], $container['melis-toolcreator']['step3']['tcf-db-table-language-lang-fk']])){
