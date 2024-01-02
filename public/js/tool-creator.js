@@ -1,111 +1,117 @@
-$(function(){
+$(function () {
 
     var $body = $("body");
 
     var loader = '<div id="loader" class="overlay-loader"><img class="loader-icon spinning-cog" src="/MelisCore/assets/images/cog12.svg" data-cog="cog12"></div>';
 
-    $body.on("click", ".melis-tool-creator .btn-steps", function(){
+    $body.on("click", ".melis-tool-creator .btn-steps", function () {
         var curStep = $(this).data("curstep");
         var nxtStep = $(this).data("nxtstep");
 
         var dataString = new Array;
 
-        var stepForm = $(".melis-toolcreator-steps-content form.tool-creator-step-"+curStep);
+        var stepForm = $(".melis-toolcreator-steps-content form.tool-creator-step-" + curStep);
 
         var dataName = "step-form";
-        if (stepForm.length > 1){
+        if (stepForm.length > 1) {
             dataName = "step-form[%s]";
         }
 
-        stepForm.each(function(index, val){
+        stepForm.each(function (index, val) {
 
             var formData = $(this).serializeArray();
 
-            $.each(formData, function(i, v){
+            $.each(formData, function (i, v) {
                 /**
                  * This form contains input with the same name attribute of "tcf-db-table-cols"
                  */
                 var multInpt = "";
-                if ($.inArray(v.name, ["tcf-db-table-cols", "tcf-db-table-col-display", "tcf-db-table-col-editable", "tcf-db-table-col-required", "tcf-db-table-col-type", "tcf-db-table-col-validator", "tcf-db-table-col-filter", ""]) != -1){
+                if ($.inArray(v.name, ["tcf-db-table-cols", "tcf-db-table-col-display", "tcf-db-table-col-editable", "tcf-db-table-col-required", "tcf-db-table-col-type", "tcf-db-table-col-filter", ""]) != -1) {
                     multInpt = "[]";
                 }
-
-                dataString.push({
-                    name : dataName.replace(/%s/g, index)+"["+v.name+"]"+multInpt,
-                    value : v.value
-                });
+                if (v.name.startsWith("tcf-db-table-col-validator")) {
+                    dataString.push({
+                        name: dataName.replace(/%s/g, index) + "[" + ((v.name).replace(/\[\]/g, '')) + "]" + "[]",
+                        value: v.value
+                    });
+                } else {
+                    dataString.push({
+                        name: dataName.replace(/%s/g, index) + "[" + v.name + "]" + multInpt,
+                        value: v.value
+                    });
+                }
             });
         });
-
+       
         dataString.push({
-            name : "curStep",
-            value : curStep,
+            name: "curStep",
+            value: curStep,
         });
 
         dataString.push({
-            name : "nxtStep",
-            value : nxtStep,
+            name: "nxtStep",
+            value: nxtStep,
         });
 
-        if ($(this).hasClass("tcf-validate")){
+        if ($(this).hasClass("tcf-validate")) {
             dataString.push({
-                name : "validate",
-                value : true,
+                name: "validate",
+                value: true,
             });
         }
 
         $("#id_melistoolcreator_steps").append(loader);
 
-        $.post("/melis/tool-creator-validate-cur-step", dataString).done(function(data){
+        $.post("/melis/tool-creator-validate-cur-step", dataString).done(function (data) {
 
             $("#id_melistoolcreator_steps #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
 
-            setTimeout(function(){
-                if(!data.errors) {
+            setTimeout(function () {
+                if (!data.errors) {
                     $("#id_melistoolcreator_steps").html(data.html);
 
                     $(".melis-toolcreator-steps li").removeClass("active");
                     var targetId = $("#id_melistoolcreator_steps .steps-content").attr("id");
-                    $("#tc_"+targetId).addClass("active");
+                    $("#tc_" + targetId).addClass("active");
 
-                }else{
+                } else {
                     melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);
-                    tcHighlightErrors(0, data.errors, ".tool-creator-step-"+curStep);
+                    tcHighlightErrors(0, data.errors, ".tool-creator-step-" + curStep);
                     $("#id_melistoolcreator_steps #loader").remove();
                 }
             }, 500);
 
-        }).fail(function(xhr, textStatus, errorThrown){
-            console.log( translations.tr_meliscore_error_message );
+        }).fail(function (xhr, textStatus, errorThrown) {
+            console.log(translations.tr_meliscore_error_message);
             // alert(xhr.responseText);
         });
     });
 
     function tcHighlightErrors(success, errors, divContainer) {
         // if all form fields are error color them red
-        $(divContainer + " .form-group label").css("color","inherit");
+        $(divContainer + " .form-group label").css("color", "inherit");
 
-        $(divContainer + " .form-group label").css("color","#686868");
-        $.each( errors, function( key, error ) {
-            $(divContainer + " .form-control[name='"+key +"']").prev("label").css("color","red");
+        $(divContainer + " .form-group label").css("color", "#686868");
+        $.each(errors, function (key, error) {
+            $(divContainer + " .form-control[name='" + key + "']").prev("label").css("color", "red");
         });
     }
 
-    $body.on("change", "input[name='tcf-tool-type']", function(){
+    $body.on("change", "input[name='tcf-tool-type']", function () {
         $(".tcf-tool-type").parents(".form-group").hide();
-        $(".tcf-tool-type-"+$(this).val()).parents(".form-group").show();
+        $(".tcf-tool-type-" + $(this).val()).parents(".form-group").show();
 
-        if ($("input[name='tcf-tool-framework'].tcf-tool-type-"+$(this).val()).length) {
+        if ($("input[name='tcf-tool-framework'].tcf-tool-type-" + $(this).val()).length) {
 
-            if ($("input[name='tcf-create-framework-tool']").parents(".make-switch").find(".switch-animate").hasClass("switch-on"))  {
-                $("input[name='tcf-tool-framework'].tcf-tool-type-"+$(this).val()).parents(".form-group").show();
-            }else{
-                $("input[name='tcf-tool-framework'].tcf-tool-type-"+$(this).val()).parents(".form-group").hide();
+            if ($("input[name='tcf-create-framework-tool']").parents(".make-switch").find(".switch-animate").hasClass("switch-on")) {
+                $("input[name='tcf-tool-framework'].tcf-tool-type-" + $(this).val()).parents(".form-group").show();
+            } else {
+                $("input[name='tcf-tool-framework'].tcf-tool-type-" + $(this).val()).parents(".form-group").hide();
             }
         }
     });
 
-    $body.on("click", ".tc-reload-dbtbl-cached", function(){
+    $body.on("click", ".tc-reload-dbtbl-cached", function () {
 
         $("#id_melistoolcreator_steps").append(loader);
 
@@ -113,9 +119,9 @@ $(function(){
             reloadDbTblCached: true,
             curStep: 2,
             nxtStep: 3
-        }).done(function(res){
+        }).done(function (res) {
 
-            setTimeout(function(){
+            setTimeout(function () {
                 $("#id_melistoolcreator_steps #loader").remove();
 
                 $("#id_melistoolcreator_steps").html(res);
@@ -124,15 +130,15 @@ $(function(){
         });
     });
 
-    $body.on("click", ".melis-toolcreator-steps-table-tabs .widget-head a[data-toggle='tab']", function(){
-       var type =$(this).data("type");
+    $body.on("click", ".melis-toolcreator-steps-table-tabs .widget-head a[data-toggle='tab']", function () {
+        var type = $(this).data("type");
     });
 
-    function resetLangDbSelection(disableTlb){
+    function resetLangDbSelection(disableTlb) {
 
         $(".melis-toolcreator-steps-language-db-table-list li").removeClass("melis-toolcreator-disable-db-tbl-item");
-        if (typeof disableTlb !== "undefined"){
-            $(".melis-toolcreator-steps-language-db-table-list li[data-table-name='"+disableTlb+"']").addClass("melis-toolcreator-disable-db-tbl-item");
+        if (typeof disableTlb !== "undefined") {
+            $(".melis-toolcreator-steps-language-db-table-list li[data-table-name='" + disableTlb + "']").addClass("melis-toolcreator-disable-db-tbl-item");
         }
 
         $(".melis-toolcreator-steps-language-db-table-list li .fa").removeClass("fa-check-square-o")
@@ -145,7 +151,7 @@ $(function(){
         $(".melis-toolcreator-steps-table-list.melis-toolcreator-steps-language-db-table-list #loader").remove();
     }
 
-    $body.on("click", ".melis-toolcreator-steps-table-list li", function(){
+    $body.on("click", ".melis-toolcreator-steps-table-list li", function () {
 
         if ($(this).find(".fa").hasClass("fa-check-square-o") || $(this).hasClass("melis-toolcreator-disable-db-tbl-item")) {
             return;
@@ -153,51 +159,51 @@ $(function(){
 
         var type = $(this).parent("ul").data("type");
 
-        var typeSelector = ".melis-toolcreator-steps-"+type+"-table-list";
+        var typeSelector = ".melis-toolcreator-steps-" + type + "-table-list";
 
-        $(".melis-toolcreator-steps-table-list"+typeSelector+" li .fa").removeClass("fa-check-square-o")
-                                                                        .addClass("fa-square-o")
-                                                                        .removeClass("text-success");
+        $(".melis-toolcreator-steps-table-list" + typeSelector + " li .fa").removeClass("fa-check-square-o")
+            .addClass("fa-square-o")
+            .removeClass("text-success");
         $(this).find(".fa").addClass("fa-check-square-o");
         $(this).find(".fa").removeClass("fa-square-o");
         $(this).find(".fa").addClass("text-success");
 
-        $(".melis-toolcreator-steps-table-list"+typeSelector).append(loader);
+        $(".melis-toolcreator-steps-table-list" + typeSelector).append(loader);
 
-        $(".melis-toolcreator-steps-"+type+"-table-columns").append(loader);
+        $(".melis-toolcreator-steps-" + type + "-table-columns").append(loader);
 
         var input = "tcf-db-table";
-        if (type !== "primary-db"){
+        if (type !== "primary-db") {
             input = "tcf-db-table-language-tbl";
         }
 
-        $(".melis-toolcreator-steps-"+type+"-table-list input[name='"+input+"']").val($(this).data("table-name"));
+        $(".melis-toolcreator-steps-" + type + "-table-list input[name='" + input + "']").val($(this).data("table-name"));
 
         if (type === "primary-db") {
             $("#melistoolcreator_step3 .alert").hide("slow");
 
             $(".melis-toolcreator-steps-table-list.melis-toolcreator-steps-language-db-table-list").append(loader);
-            if ($.trim($(".melis-toolcreator-steps-language-db-table-columns").html()) !== ""){
+            if ($.trim($(".melis-toolcreator-steps-language-db-table-columns").html()) !== "") {
                 $(".melis-toolcreator-steps-language-db-table-columns").append(loader);
             }
-        }else{
+        } else {
             $("#melistoolcreator_step3 .melis-toolcreator-steps-language-db-table-columns .alert").hide("slow");
         }
 
         var tableName = $(this).data("table-name");
 
-        $.post('/melis/tool-creator-get-tbl-cols', {tableName : tableName, type : type}).done(function(res){
+        $.post('/melis/tool-creator-get-tbl-cols', { tableName: tableName, type: type }).done(function (res) {
 
-            $(".melis-toolcreator-steps-table-list"+typeSelector+" #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
-            $(".melis-toolcreator-steps-"+type+"-table-columns #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
+            $(".melis-toolcreator-steps-table-list" + typeSelector + " #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
+            $(".melis-toolcreator-steps-" + type + "-table-columns #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
 
-            setTimeout(function(){
-                $(".melis-toolcreator-steps-table-list"+typeSelector+" #loader").remove();
-                $(".melis-toolcreator-steps-"+type+"-table-columns").html(res.html);
+            setTimeout(function () {
+                $(".melis-toolcreator-steps-table-list" + typeSelector + " #loader").remove();
+                $(".melis-toolcreator-steps-" + type + "-table-columns").html(res.html);
 
-                if (type === "primary-db"){
+                if (type === "primary-db") {
                     resetLangDbSelection(tableName);
-                }else{
+                } else {
                     // Reset language Foreign key fields
                     $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-pri-fk']").val("");
                     $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-lang-fk']").val("");
@@ -208,25 +214,25 @@ $(function(){
 
 
 
-    $body.on("click", ".melis-toolcreator-steps-tbl-cols .tcf-fa-checkbox", function(){
+    $body.on("click", ".melis-toolcreator-steps-tbl-cols .tcf-fa-checkbox", function () {
 
-        if ($(this).hasClass("fa-check-square-o")){
+        if ($(this).hasClass("fa-check-square-o")) {
             // Unchecking
-            if ($(this).hasClass("tcf-fa-checkall")){
-                $(".tcf-fa-checkbox.tcf-fa-checkitem[data-col-type='"+$(this).data("col-type")+"'").addClass("fa-square-o")
-                                                                                                .removeClass("text-success")
-                                                                                                .removeClass("fa-check-square-o")
-                                                                                                .next("input").attr("checked", false);
+            if ($(this).hasClass("tcf-fa-checkall")) {
+                $(".tcf-fa-checkbox.tcf-fa-checkitem[data-col-type='" + $(this).data("col-type") + "'").addClass("fa-square-o")
+                    .removeClass("text-success")
+                    .removeClass("fa-check-square-o")
+                    .next("input").attr("checked", false);
 
                 if ($(this).hasClass("tfc-table-list")) {
                     // Disabling field type select input
-                    $("select[name='tcf-db-table-col-display'][data-col-type='"+$(this).data("col-type")+"']").attr("disabled", true);
+                    $("select[name='tcf-db-table-col-display'][data-col-type='" + $(this).data("col-type") + "']").attr("disabled", true);
                 }
-            }else{
+            } else {
                 // Unchecking select all checkbox
-                $(".tcf-fa-checkbox.tcf-fa-checkall[data-col-type='"+$(this).data("col-type")+"']").addClass("fa-square-o")
-                                                                                                .removeClass("text-success")
-                                                                                                .removeClass("fa-check-square-o");
+                $(".tcf-fa-checkbox.tcf-fa-checkall[data-col-type='" + $(this).data("col-type") + "']").addClass("fa-square-o")
+                    .removeClass("text-success")
+                    .removeClass("fa-check-square-o");
             }
 
             $(this).addClass("fa-square-o")
@@ -238,8 +244,8 @@ $(function(){
             // Unchecking required if the editable is unchecked
             if ($(this).hasClass("tcf-fa-checkbox-editable")) {
 
-                var requiredInput =  $("input[name='tcf-db-table-col-required'][value='"+$(this).next("input").val()+"']");
-                var requiredIcon =  $("input[name='tcf-db-table-col-required'][value='"+$(this).next("input").val()+"']").prev();
+                var requiredInput = $("input[name='tcf-db-table-col-required'][value='" + $(this).next("input").val() + "']");
+                var requiredIcon = $("input[name='tcf-db-table-col-required'][value='" + $(this).next("input").val() + "']").prev();
 
                 if (requiredIcon.hasClass("fa-check-square-o")) {
                     requiredIcon.addClass("fa-square-o");
@@ -250,7 +256,7 @@ $(function(){
 
                 // Disabling field type select input
                 $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", true);
-                
+
             }
 
 
@@ -259,16 +265,16 @@ $(function(){
                 $(this).parents("tr").find("select[name='tcf-db-table-col-display']").attr("disabled", true);
             }
 
-        }else{
+        } else {
             // Checking
-            if ($(this).hasClass("tcf-fa-checkall")){
-                $(".tcf-fa-checkbox.tcf-fa-checkitem[data-col-type='"+$(this).data("col-type")+"']").removeClass("fa-square-o")
-                                                                                                .addClass("fa-check-square-o")
-                                                                                                .addClass("text-success")
-                                                                                                .next("input").attr("checked", true);
+            if ($(this).hasClass("tcf-fa-checkall")) {
+                $(".tcf-fa-checkbox.tcf-fa-checkitem[data-col-type='" + $(this).data("col-type") + "']").removeClass("fa-square-o")
+                    .addClass("fa-check-square-o")
+                    .addClass("text-success")
+                    .next("input").attr("checked", true);
                 if ($(this).hasClass("tfc-table-list")) {
                     // Disabling field type select input
-                    $("select[name='tcf-db-table-col-display'][data-col-type='"+$(this).data("col-type")+"']").attr("disabled", false);
+                    $("select[name='tcf-db-table-col-display'][data-col-type='" + $(this).data("col-type") + "']").attr("disabled", false);
                 }
             }
 
@@ -278,19 +284,19 @@ $(function(){
                 .next("input").attr("checked", true);
 
             // Set check "select all checkbox"
-            if ($(".tcf-fa-checkbox.tcf-fa-checkitem").length === $(".tcf-fa-checkbox.tcf-fa-checkitem.fa-check-square-o").length){
-                $(".tcf-fa-checkbox.tcf-fa-checkall[data-col-type='"+$(this).data("col-type")+"']").removeClass("fa-square-o")
-                                                                                            .addClass("fa-check-square-o")
-                                                                                            .addClass("text-success");
+            if ($(".tcf-fa-checkbox.tcf-fa-checkitem").length === $(".tcf-fa-checkbox.tcf-fa-checkitem.fa-check-square-o").length) {
+                $(".tcf-fa-checkbox.tcf-fa-checkall[data-col-type='" + $(this).data("col-type") + "']").removeClass("fa-square-o")
+                    .addClass("fa-check-square-o")
+                    .addClass("text-success");
             }
 
             // Checking editable if the required is checked
             if ($(this).hasClass("tcf-fa-checkbox-required")) {
 
-                var editableInput =  $("input[name='tcf-db-table-col-editable'][value='"+$(this).next("input").val()+"']");
-                var editableIcon =  $("input[name='tcf-db-table-col-editable'][value='"+$(this).next("input").val()+"']").prev();
+                var editableInput = $("input[name='tcf-db-table-col-editable'][value='" + $(this).next("input").val() + "']");
+                var editableIcon = $("input[name='tcf-db-table-col-editable'][value='" + $(this).next("input").val() + "']").prev();
 
-                if (editableIcon.hasClass("fa-square-o")){
+                if (editableIcon.hasClass("fa-square-o")) {
                     editableIcon.removeClass("fa-square-o");
                     editableIcon.addClass("fa-check-square-o");
                     editableIcon.addClass("text-success");
@@ -314,71 +320,71 @@ $(function(){
         }
     });
 
-    $body.on("click", ".melis-tc-tool-language.fa", function(){
-        if ($(this).hasClass("fa-check-square-o")){
+    $body.on("click", ".melis-tc-tool-language.fa", function () {
+        if ($(this).hasClass("fa-check-square-o")) {
             // unChecking
             $(this).addClass("fa-square-o");
             $(this).removeClass("text-success");
             $(this).removeClass("fa-check-square-o");
-            $(".melis-tc-tool-language-db-list").hide(1000, "linear", function(){
+            $(".melis-tc-tool-language-db-list").hide(1000, "linear", function () {
                 $(".tool-creator-step-3 input[name='tcf-db-table-has-language']").val("");
                 $(".tool-creator-step-3 input[name='tcf-db-table-language-tbl']").val("");
                 $(".tool-creator-step-3 input[name='tcf-db-table-language-pri-fk']").val("");
                 $(".tool-creator-step-3 input[name='tcf-db-table-language-lang-fk']").val("");
             });
-        }else{
+        } else {
             // Checking
             $(this).removeClass("fa-square-o");
             $(this).addClass("fa-check-square-o");
             $(this).addClass("text-success");
-            $(".melis-tc-tool-language-db-list").show(1000, "linear", function(){
+            $(".melis-tc-tool-language-db-list").show(1000, "linear", function () {
                 $(".tool-creator-step-3 input[name='tcf-db-table-has-language']").val(1);
             });
         }
     });
 
-    $body.on("click", ".melis-tc-lang-tbl-pt-fk.fa, .melis-tc-lang-tbl-lt-fk.fa", function(){
-        if ($(this).hasClass("fa-check-square-o")){
+    $body.on("click", ".melis-tc-lang-tbl-pt-fk.fa, .melis-tc-lang-tbl-lt-fk.fa", function () {
+        if ($(this).hasClass("fa-check-square-o")) {
             // unChecking
             $(this).addClass("fa-square-o");
             $(this).removeClass("text-success");
             $(this).removeClass("fa-check-square-o");
-            $(".tool-creator-step-3 input[name='"+$(this).data("field-name")+"']").val("");
-        }else{
+            $(".tool-creator-step-3 input[name='" + $(this).data("field-name") + "']").val("");
+        } else {
             var ptFkInpt;
             // Checking
-            if ($(this).hasClass("melis-tc-lang-tbl-pt-fk")){
+            if ($(this).hasClass("melis-tc-lang-tbl-pt-fk")) {
                 $(".melis-tc-lang-tbl-pt-fk.fa").addClass("fa-square-o")
-                                            .removeClass("text-success")
-                                            .removeClass("fa-check-square-o");
+                    .removeClass("text-success")
+                    .removeClass("fa-check-square-o");
 
-                var ltFk = $(".melis-tc-lang-tbl-lt-fk.fa[data-tbl-name='"+$(this).data("tbl-name")+"']");
+                var ltFk = $(".melis-tc-lang-tbl-lt-fk.fa[data-tbl-name='" + $(this).data("tbl-name") + "']");
                 ltFk.addClass("fa-square-o")
                     .removeClass("text-success")
                     .removeClass("fa-check-square-o");
 
-                ptFkInpt = $(".tool-creator-step-3 input[name='"+ltFk.data("field-name")+"']");
+                ptFkInpt = $(".tool-creator-step-3 input[name='" + ltFk.data("field-name") + "']");
                 if (ptFkInpt.val() === $(this).data("tbl-name")) {
                     ptFkInpt.val("");
                 }
 
-            }else{
+            } else {
                 $(".melis-tc-lang-tbl-lt-fk.fa").addClass("fa-square-o")
-                                            .removeClass("text-success")
-                                            .removeClass("fa-check-square-o");
+                    .removeClass("text-success")
+                    .removeClass("fa-check-square-o");
 
-                var ptFk = $(".melis-tc-lang-tbl-pt-fk.fa[data-tbl-name='"+$(this).data("tbl-name")+"']");
+                var ptFk = $(".melis-tc-lang-tbl-pt-fk.fa[data-tbl-name='" + $(this).data("tbl-name") + "']");
                 ptFk.addClass("fa-square-o")
                     .removeClass("text-success")
                     .removeClass("fa-check-square-o");
 
-                ptFkInpt = $(".tool-creator-step-3 input[name='"+ptFk.data("field-name")+"']");
+                ptFkInpt = $(".tool-creator-step-3 input[name='" + ptFk.data("field-name") + "']");
                 if (ptFkInpt.val() === $(this).data("tbl-name")) {
                     ptFkInpt.val("");
                 }
             }
 
-            $(".tool-creator-step-3 input[name='"+$(this).data("field-name")+"']").val($(this).data("tbl-name"));
+            $(".tool-creator-step-3 input[name='" + $(this).data("field-name") + "']").val($(this).data("tbl-name"));
 
             $(this).removeClass("fa-square-o");
             $(this).addClass("fa-check-square-o");
@@ -386,24 +392,24 @@ $(function(){
         }
     });
 
-    $body.on("switch-change", "div.make-switch[data-input-name='tcf-create-framework-tool']", function(e, data){
-        if(data.value === false){
+    $body.on("switch-change", "div.make-switch[data-input-name='tcf-create-framework-tool']", function (e, data) {
+        if (data.value === false) {
             $("label[for='tcf-tool-framework']").parents(".form-group").hide();
             // $("input[name='tcf-tool-framework']").attr("disabled", true);
-        }else{
+        } else {
             $("label[for='tcf-tool-framework']").parents(".form-group").show();
             // $("input[name='tcf-tool-framework']").attr("disabled", false);
         }
     });
 
-    $body.on("click", ".melis-tc-final-content .fa", function(){
-        if ($(this).hasClass("fa-check-square-o")){
+    $body.on("click", ".melis-tc-final-content .fa", function () {
+        if ($(this).hasClass("fa-check-square-o")) {
             // unChecking
             $(this).addClass("fa-square-o");
             $(this).removeClass("text-success");
             $(this).removeClass("fa-check-square-o");
             $(this).next("input").attr("checked", false);
-        }else{
+        } else {
             // Checking
             $(this).removeClass("fa-square-o");
             $(this).addClass("fa-check-square-o");
@@ -412,18 +418,18 @@ $(function(){
         }
     });
 
-    $body.on("click", ".tc-final-step", function(){
+    $body.on("click", ".tc-final-step", function () {
 
         var activateModule = false;
 
-        if ($(".melis-tc-final-content .fa").hasClass("fa-check-square-o")){
+        if ($(".melis-tc-final-content .fa").hasClass("fa-check-square-o")) {
             activateModule = true;
         }
 
-        $.get("/melis/MelisToolCreator/ToolCreator/finalize", {activateModule : activateModule}).done(function(res){
+        $.get("/melis/MelisToolCreator/ToolCreator/finalize", { activateModule: activateModule }).done(function (res) {
             $(".melis-tc-final-content").hide();
             $(".melis-tc-final-content").hide();
-        }).fail(function(){
+        }).fail(function () {
 
         });
     });

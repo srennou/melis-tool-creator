@@ -37,7 +37,7 @@
                         </thead>
                         <?php
                             $ctr = 1;
-                            foreach ($this->tableCols As $col){
+                            foreach ($this->tableCols As $tableColsKey => $col){
 
                                 // Excluding field with Blob type
                                 if (!is_bool(strpos($col['Type'], 'blob')))
@@ -45,6 +45,7 @@
 
                                 $fieldValidators = clone $form->get('tcf-db-table-col-validator');
                                 $fieldFilters = clone $form->get('tcf-db-table-col-filter');
+                                $fieldValidators->setName('tcf-db-table-col-validator'.$tableColsKey);
 
                                 $pk = in_array($col['Key'], ['PRI']) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
                                 if (isset($col['isAutoIncrement'])){
@@ -70,7 +71,7 @@
                                     $fieldValidators = $form->get('tcf-db-table-col-validator');
                                     $fieldFilters =  $form->get('tcf-db-table-col-filter');
                                 }
-                                
+                                if($fieldValidators->getAttribute('class') != 'hidden') {
                                     $slct2Id = 'selec2-'.uniqid();
                                     $attrib = $fieldValidators->getAttributes();
                                     $fieldValidators->setAttribute('data-slct2-id', $slct2Id);
@@ -81,7 +82,9 @@
                                     $formfieldValidators .= '$("select[data-slct2-id=\''.$slct2Id.'\']").select2();';
                                     $formfieldValidators .= '$("select[data-slct2-id=\''.$slct2Id.'\']").next("span").css("width", "100%");';
                                     $formfieldValidators .= '</script>'; 
-
+                                }else{
+                                    $formfieldValidators = '';
+                                }
                                 echo '<tr>
                                         <td>'.$ctr++.'</td>
                                         <td>'.$pk.'</td>
@@ -119,7 +122,7 @@
                             </thead>
                             <?php
                                 $ctr = 1;
-                                foreach ($this->langTblCols As $col){
+                                foreach ($this->langTblCols As $langTblColsKey => $col){
 
                                     // Excluding field with Blob type
                                     if (!is_bool(strpos($col['Type'], 'blob')))
@@ -130,6 +133,7 @@
 
                                     $fieldValidators = clone $form->get('tcf-db-table-col-validator');
                                     $fieldFilters =  clone $form->get('tcf-db-table-col-filter');
+                                    $fieldValidators->setName('tcf-db-table-col-validator'.$langTblColsKey);
 
                                     $pk = in_array($col['Key'], array('PRI')) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
 

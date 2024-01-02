@@ -63,7 +63,7 @@ return [
                     ],
                     'melistoolcreator_step6' => [
                         'name' => 'tr_melistoolcreator_custom_translations',
-                        'icon' => 'fa-language'
+                        'icon' => 'fa-cog'
                     ],
                     'melistoolcreator_step7' => [
                         'name' => 'tr_melistoolcreator_cols_translations',

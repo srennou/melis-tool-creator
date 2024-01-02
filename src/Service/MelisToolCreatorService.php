@@ -502,20 +502,10 @@ class MelisToolCreatorService  extends MelisGeneralService
                                 if (in_array(preg_replace("/\([^)]+\)/", '', $ccol['Type']), $colNumTypes))
                                     array_push($formInputValidator, $this->fgc('/Form/number-validator'));
 
-                    $inptValidator = $this->tcSteps['step6']['tcf-db-table-col-validator'][$key]??'none';
-                    if($inptValidator != 'none'){
-                        switch ($inptValidator){
-                            case 'alpha-validator':
-                                array_push($formInputValidator, $this->fgc('/Form/alpha-validator'));
-                                break;
-                            case 'email-validator':
-                                array_push($formInputValidator, $this->fgc('/Form/email-validator'));
-                                break;
-                            case 'date-validator':
-                                array_push($formInputValidator, $this->fgc('/Form/date-validator'));
-                                break;
-                            default:
-                                break;
+                    $inptValidator = $this->tcSteps['step6']['tcf-db-table-col-validator'.$key]??[];
+                    if(!empty($inptValidator)){
+                        foreach($inptValidator as $validatorName){
+                            array_push($formInputValidator, $this->fgc('/Form/'.$validatorName));
                         }
                     }
                     $formInputFilterTplContent = $this->sp('#TCVALIDATORS', implode(','."\n", $formInputValidator), $formInputFilterTplContent);

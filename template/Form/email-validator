@@ -5,4 +5,4 @@
                                                     \Laminas\Validator\EmailAddress::INVALID_FORMAT => 'tr_moduletpl_err_invalid_email',
                                                 ],
                                             ],
-                                        ],
+                                        ]

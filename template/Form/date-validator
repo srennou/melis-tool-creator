@@ -6,4 +6,4 @@
                                                     \Laminas\Validator\Date::INVALID => 'tr_moduletpl_err_invalid_date',
                                                 ],
                                             ],
-                                        ],
+                                        ]
