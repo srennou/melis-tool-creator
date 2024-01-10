@@ -553,18 +553,20 @@ class MelisToolCreatorService  extends MelisGeneralService
         $fileContent = $this->fgc('/Config/app.tools.php');
 
         $strFilterConfig = [];
-        foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
-            $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
-            if($filterType == 'select' || $filterType == 'input' || $filterType == 'date'){
-                $tableFilterConfig = '/Filter/filter-config';
-            }else{
-                $tableFilterConfig = '';
+        if($this->isDbTool()){
+            foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
+                $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
+                if($filterType == 'select' || $filterType == 'input' || $filterType == 'date'){
+                    $tableFilterConfig = '/Filter/filter-config';
+                }else{
+                    $tableFilterConfig = '';
+                }
+                $strFilterConfig[] = empty($tableFilterConfig) ? '' : $this->sp(
+                    ['#TCCOLUMNNAME', '#TCCOLUMN'],
+                    [$this->changeStringFormatForView($col['Field']), $col['Field']],
+                    $this->fgc($tableFilterConfig)
+                );
             }
-            $strFilterConfig[] = empty($tableFilterConfig) ? '' : $this->sp(
-                ['#TCCOLUMNNAME', '#TCCOLUMN'],
-                [$this->changeStringFormatForView($col['Field']), $col['Field']],
-                $this->fgc($tableFilterConfig)
-            );
         }
         $strFilterConfig = implode("\n", $strFilterConfig);
         $fileContent = $this->sp('#CONFIGFILTERDATA', $strFilterConfig, $fileContent);
@@ -848,53 +850,55 @@ class MelisToolCreatorService  extends MelisGeneralService
         $strFilterController = [];
         $strFilterParames = [];
         $strFilterRender = [];
-        foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
-            $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
-            $tableFilterParames = false;
-            $tableFilterController = false;
-            switch ($filterType){
-                case 'select':
-                    $tableFilterController = true;
-                    $tableFilterParames = true;
-                    $tableFilterRender = '/Filter/select/filter-render';
-                    break;
-                case 'input':
-                    $tableFilterController = true;
-                    $tableFilterParames = true;
-                    $tableFilterRender = '/Filter/input/filter-render';
-                    break;
-                case 'date':
-                    $tableFilterController = true;
-                    $tableFilterParames = true;
-                    $tableFilterRender = '/Filter/date/filter-render';
-                    break;
-                default:
-                    $tableFilterController = false;
-                    $tableFilterParames = false;
-                    $tableFilterRender = '';
-                    break;
-            }
+        if($this->isDbTool()){
+            foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
+                $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
+                $tableFilterParames = false;
+                $tableFilterController = false;
+                switch ($filterType){
+                    case 'select':
+                        $tableFilterController = true;
+                        $tableFilterParames = true;
+                        $tableFilterRender = '/Filter/select/filter-render';
+                        break;
+                    case 'input':
+                        $tableFilterController = true;
+                        $tableFilterParames = true;
+                        $tableFilterRender = '/Filter/input/filter-render';
+                        break;
+                    case 'date':
+                        $tableFilterController = true;
+                        $tableFilterParames = true;
+                        $tableFilterRender = '/Filter/date/filter-render';
+                        break;
+                    default:
+                        $tableFilterController = false;
+                        $tableFilterParames = false;
+                        $tableFilterRender = '';
+                        break;
+                }
 
-            if($tableFilterController){
-                $strFilterController[] = $this->sp(
-                    ['#TCCOLUMN'],
-                    [$col['Field']],
-                    $this->fgc('/Filter/filter-controller')
-                );
-            }
-            if($tableFilterParames){
-                $strFilterParames[] = $this->sp(
-                    ['#TCCOLUMN'],
-                    [$col['Field']],
-                    $this->fgc('/Filter/filter-parames')
-                );
-            }
-            if(!empty($tableFilterRender)){
-                $strFilterRender[] = $this->sp(
-                    ['#TCCOLUMNNAME', '#TCCOLUMN'],
-                    [$this->changeStringFormat($col['Field']), $col['Field']],
-                    $this->fgc($tableFilterRender)
-                );
+                if($tableFilterController){
+                    $strFilterController[] = $this->sp(
+                        ['#TCCOLUMN'],
+                        [$col['Field']],
+                        $this->fgc('/Filter/filter-controller')
+                    );
+                }
+                if($tableFilterParames){
+                    $strFilterParames[] = $this->sp(
+                        ['#TCCOLUMN'],
+                        [$col['Field']],
+                        $this->fgc('/Filter/filter-parames')
+                    );
+                }
+                if(!empty($tableFilterRender)){
+                    $strFilterRender[] = $this->sp(
+                        ['#TCCOLUMNNAME', '#TCCOLUMN'],
+                        [$this->changeStringFormat($col['Field']), $col['Field']],
+                        $this->fgc($tableFilterRender)
+                    );
+                }
             }
         }
 
@@ -1142,39 +1146,40 @@ class MelisToolCreatorService  extends MelisGeneralService
             $strFilterJs = [];
             $strInitCheckFilterJs = [];
             $strInitFilterJs = [];
-
-            foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
-                $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
-                switch ($filterType){
-                    case 'select':
-                        $tableFilterJS = '/Filter/select/filter-js';
-                        break;
-                    case 'input':
-                        $tableFilterJS = '/Filter/input/filter-js';
-                        break;
-                    case 'date':
-                        $tableFilterJS = '/Filter/date/filter-js';
-                        break;
-                    default:
-                        $tableFilterJS = '';
-                        break;
-                }
-                if(!empty($tableFilterJS)){
-                    $strFilterJs[] = $this->sp(
-                        ['#TCCOLUMN'],
-                        [$col['Field']],
-                        $this->fgc($tableFilterJS)
-                    );
-                    $strInitFilterJs[] = $this->sp(
-                        ['#TCCOLUMN'],
-                        [$col['Field']],
-                        $this->fgc('/Asset/filter-js-init')
-                    );
-                    $strInitCheckFilterJs[] = $this->sp(
-                        ['#TCCOLUMN'],
-                        [$col['Field']],
-                        $this->fgc('/Asset/filter-js-check')
-                    );
+            if($this->isDbTool()){
+                foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
+                    $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
+                    switch ($filterType){
+                        case 'select':
+                            $tableFilterJS = '/Filter/select/filter-js';
+                            break;
+                        case 'input':
+                            $tableFilterJS = '/Filter/input/filter-js';
+                            break;
+                        case 'date':
+                            $tableFilterJS = '/Filter/date/filter-js';
+                            break;
+                        default:
+                            $tableFilterJS = '';
+                            break;
+                    }
+                    if(!empty($tableFilterJS)){
+                        $strFilterJs[] = $this->sp(
+                            ['#TCCOLUMN'],
+                            [$col['Field']],
+                            $this->fgc($tableFilterJS)
+                        );
+                        $strInitFilterJs[] = $this->sp(
+                            ['#TCCOLUMN'],
+                            [$col['Field']],
+                            $this->fgc('/Asset/filter-js-init')
+                        );
+                        $strInitCheckFilterJs[] = $this->sp(
+                            ['#TCCOLUMN'],
+                            [$col['Field']],
+                            $this->fgc('/Asset/filter-js-check')
+                        );
+                    }
                 }
             }
             $strFilterJs = implode("\n", $strFilterJs);
@@ -1565,41 +1570,43 @@ class MelisToolCreatorService  extends MelisGeneralService
         $fileContent = str_replace('#SERVICEUPDATEORDERING', $updateOrderingFunction, $fileContent);
         $strArrayParameters = [];
         $strFilterParames = [];
-        foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
-            $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
-            $tableFilterParames = false;
-            $tableArrayParameters = false;
-            switch ($filterType){
-                case 'select':
-                    $tableArrayParameters = true;
-                    $tableFilterParames = true;
-                    break;
-                case 'input':
-                    $tableArrayParameters = true;
-                    $tableFilterParames = true;
-                    break;
-                case 'date':
-                    $tableArrayParameters = true;
-                    $tableFilterParames = true;
-                    break;
-                default:
-                    $tableArrayParameters = false;
-                    $tableFilterParames = false;
-                    break;
-            }
-            if($tableFilterParames){
-                $strFilterParames[] = $this->sp(
-                    ['#TCCOLUMN'],
-                    [$col['Field']],
-                    $this->fgc('/Filter/filter-parames')
-                );
-            }
-            if($tableArrayParameters){
-                $strArrayParameters[] = $this->sp(
-                    ['#TCCOLUMN'],
-                    [$col['Field']],
-                    $this->fgc('/Filter/filter-array-parames')
-                );
+        if($this->isDbTool()){
+            foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $key => $col){
+                $filterType = $this->tcSteps['step6']['tcf-db-table-col-filter'][$key]??'';
+                $tableFilterParames = false;
+                $tableArrayParameters = false;
+                switch ($filterType){
+                    case 'select':
+                        $tableArrayParameters = true;
+                        $tableFilterParames = true;
+                        break;
+                    case 'input':
+                        $tableArrayParameters = true;
+                        $tableFilterParames = true;
+                        break;
+                    case 'date':
+                        $tableArrayParameters = true;
+                        $tableFilterParames = true;
+                        break;
+                    default:
+                        $tableArrayParameters = false;
+                        $tableFilterParames = false;
+                        break;
+                }
+                if($tableFilterParames){
+                    $strFilterParames[] = $this->sp(
+                        ['#TCCOLUMN'],
+                        [$col['Field']],
+                        $this->fgc('/Filter/filter-parames')
+                    );
+                }
+                if($tableArrayParameters){
+                    $strArrayParameters[] = $this->sp(
+                        ['#TCCOLUMN'],
+                        [$col['Field']],
+                        $this->fgc('/Filter/filter-array-parames')
+                    );
+                }
             }
         }
         $strFilterParames = implode("", $strFilterParames);
