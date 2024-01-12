@@ -67,7 +67,7 @@ class Module
 
             $translationList = [];
             if(file_exists($_SERVER['DOCUMENT_ROOT'].'/../module/MelisModuleConfig/config/translation.list.php')){
-                $translationList = include 'module/MelisModuleConfig/config/translation.list.php';
+                $translationList = include_once 'module/MelisModuleConfig/config/translation.list.php';
             }
 
             foreach($translationType as $type){
