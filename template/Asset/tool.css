@@ -11,7 +11,12 @@
 #filtertableTableContent_wrapper label{
     font-weight: 800;
 }
-
+#moduletplTableContent_processing {
+    position: absolute;
+    top: 5em;
+    left: 50%;
+    margin-left: -50px;
+}
 #DRAGABLESTYLE
 
 #TCCCOLUMNSHOWHIDECSS
