@@ -513,7 +513,7 @@ class ModuleTplToolService extends MelisServiceManager
             // simulate javascript code function here
             $dtJScript = 'window.' . $fnName . ' = function() {
                     let customMelisLang = '.$language.';
-                    customMelisLang.processing = \'<div style="display: inline;"><i class="melis-primary-txt fa fa-cog fa-spin fa-2x fa-fw"></i>\'+'.$language.'.sProcessing+\'</div>\';
+                    customMelisLang.processing = \'<div style="justify-content: center; display: flex; align-items: center;"><i class="melis-primary-txt fa fa-cog fa-spin fa-2x fa-fw"></i>\'+'.$language.'.sProcessing+\'</div>\';
                     ' . $reInitTable . '
                     var ' . str_replace("#", "$", $tableId) . ' = $("' . $tableId . '").DataTable({
                         ' . $select . '
