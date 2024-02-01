@@ -1674,15 +1674,15 @@ class MelisToolCreatorService  extends MelisGeneralService
     }
     private function isSimpleTable()
     {
-        return $this->tcSteps['step6']['tcf-tool-table-type'] == 'dataTable' ? true : false;
+        return $this->isDbTool()? ($this->tcSteps['step6']['tcf-tool-table-type'] == 'dataTable' ? true : false):false;
     }
     private function isOrdredTable()
     {
-        return $this->tcSteps['step6']['tcf-tool-table-type'] == 'ordered' ? true : false;
+        return $this->isDbTool()? ($this->tcSteps['step6']['tcf-tool-table-type'] == 'ordered' ? true : false):false;
     }
     private function isShowHideTable()
     {
-        return $this->tcSteps['step6']['tcf-tool-table-type'] == 'show_hide' ? true : false;
+        return $this->isDbTool()? ($this->tcSteps['step6']['tcf-tool-table-type'] == 'show_hide' ? true : false):false;
     }
     private function isIframeTool()
     {
