@@ -74,8 +74,8 @@ class ToolCreatorController extends MelisAbstractActionController
         // Database table caching
         $this->getDBTablesCached();
 
-        $melisEngineCacheSystem = $this->getServiceManager()->get('MelisEngineCacheSystem');
-        $dbCached = $melisEngineCacheSystem->getCacheByKey($this->cacheKey, $this->cacheConfig, true);
+        $cacheSrv = $this->getServiceManager()->get('MelisToolCreatorCacheSystemService');
+        $dbCached = $cacheSrv->getCacheByKey($this->cacheKey, $this->cacheConfig, true);
 
         if (!$dbCached || is_null($dbCached))
             $filePermissionErr[] = 'tr_melistoolcreator_fp_db_cached_empty';
@@ -1485,6 +1485,10 @@ class ToolCreatorController extends MelisAbstractActionController
                 // Reloading module paths
                 unlink($_SERVER['DOCUMENT_ROOT'].'/../config/melis.modules.path.php');
 
+                // remove all BO zone cached
+                $coreCacheService = $this->getServiceManager()->get('MelisCoreCacheSystemService');
+                $coreCacheService->deleteCacheByPrefix('*', \MelisCore\Controller\PluginViewController::cacheConfig);
+
                 // Flag to reload the page in-order to run the new created tool
                 $viewStp->restartRequired = true;
             }
@@ -1545,13 +1549,13 @@ class ToolCreatorController extends MelisAbstractActionController
         //added to fix timeout issue when Tool Creator is opened for the first time
         ini_set('max_execution_time', 0);
         set_time_limit(0);
-       
+    
         /**
          * Caching Database tables to file cache
          * to avoid slow request for step 2
          */
-        $melisEngineCacheSystem = $this->getServiceManager()->get('MelisEngineCacheSystem');
-        $results = $melisEngineCacheSystem->getCacheByKey($this->cacheKey, $this->cacheConfig, true);
+        $cacheSrv = $this->getServiceManager()->get('MelisToolCreatorCacheSystemService');
+        $results = $cacheSrv->getCacheByKey($this->cacheKey, $this->cacheConfig, true);
         if (!$results || $reloadCached){
 
             $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
@@ -1566,7 +1570,7 @@ class ToolCreatorController extends MelisAbstractActionController
                 if (!empty($toolCreatorSrv->getTablePK($tbl->getName())))
                     $results[] = $tbl;
 
-            $melisEngineCacheSystem->setCacheByKey($this->cacheKey, $this->cacheConfig, $results, true);
+            $cacheSrv->setCacheByKey($this->cacheKey, $this->cacheConfig, $results, true);
         }
 
         return $results;
